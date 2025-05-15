@@ -8,10 +8,12 @@ from src.models.base import Base
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
-    team_id: Mapped[Optional[int]] = mapped_column(ForeignKey('teams.id'), nullable=True)
-    role: Mapped[str] = mapped_column(default='employee')
+    team_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("teams.id"), nullable=True
+    )
+    role: Mapped[str] = mapped_column(default="employee")
 
-    team: Mapped[Optional['Team']] = relationship(back_populates='users')
-    tasks: Mapped[List['Task']] = relationship(back_populates='assignee')
-    evaluations: Mapped[List['Evaluation']] = relationship(back_populates='user')
-    meetings: Mapped[List['MeetingParticipant']] = relationship(back_populates='user')
+    team: Mapped[Optional["Team"]] = relationship(back_populates="users")
+    tasks: Mapped[List["Task"]] = relationship(back_populates="assignee")
+    evaluations: Mapped[List["Evaluation"]] = relationship(back_populates="user")
+    meetings: Mapped[List["MeetingParticipant"]] = relationship(back_populates="user")
