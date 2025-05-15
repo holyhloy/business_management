@@ -1,10 +1,12 @@
-from datetime import datetime
-from typing import Optional, List
-from sqlalchemy import ForeignKey, String, Text, Enum, DateTime
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from src.models.base import Base
 import enum
 import uuid
+from datetime import datetime
+from typing import List, Optional
+
+from sqlalchemy import DateTime, Enum, ForeignKey, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.models.base import Base
 
 
 class TaskStatus(str, enum.Enum):

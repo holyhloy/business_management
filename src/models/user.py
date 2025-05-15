@@ -1,9 +1,10 @@
 import uuid
-from typing import Optional, List
+from typing import List, Optional
 
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
+
 from src.models.base import Base
 
 

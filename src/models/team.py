@@ -1,6 +1,8 @@
 from typing import List, Optional
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.models.base import Base
 
 
