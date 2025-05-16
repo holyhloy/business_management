@@ -2,7 +2,6 @@ import uuid
 from typing import Optional
 
 from fastapi_users import schemas
-from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class UserCreateSchema(schemas.BaseUserCreate):
