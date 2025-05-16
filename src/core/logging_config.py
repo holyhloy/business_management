@@ -11,7 +11,9 @@ LOGGING_CONFIG = {
             "use_colors": True,
         },
         "verbose": {
-            "format": "%(levelname)s | %(asctime)s | %(name)s | %(filename)s:%(lineno)d | %(message)s"
+            "format": (
+                "%(levelname)s | %(asctime)s | %(name)s | %(filename)s:%(lineno)d | %(message)s"
+            )
         },
     },
     "handlers": {

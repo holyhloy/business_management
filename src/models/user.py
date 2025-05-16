@@ -1,12 +1,18 @@
 import enum
 import uuid
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.base import Base
+
+if TYPE_CHECKING:
+    from src.models.evaluation import Evaluation
+    from src.models.meeting import MeetingParticipant
+    from src.models.task import Task
+    from src.models.team import Team
 
 
 class RoleEnum(str, enum.Enum):

@@ -1,12 +1,17 @@
 import enum
 import uuid
 from datetime import datetime
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from sqlalchemy import Enum, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.base import Base
+
+if TYPE_CHECKING:
+    from src.models.evaluation import Evaluation
+    from src.models.team import Team
+    from src.models.user import User
 
 
 class TaskStatus(str, enum.Enum):
@@ -48,5 +53,5 @@ class TaskComment(Base):
     content: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
 
-    task: Mapped["Task"] = relationship(back_populates="comments")
+    task: Mapped[Task] = relationship(back_populates="comments")
     user: Mapped["User"] = relationship()

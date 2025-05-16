@@ -1,11 +1,13 @@
 import logging
 import uuid
 
+from fastapi import Depends
 from fastapi_users import BaseUserManager, UUIDIDMixin
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
 from src.api.deps import SessionDep
 from src.auth.config import SECRET
+from src.db.session import Session
 from src.models.user import User
 
 logger = logging.getLogger("app")
@@ -20,8 +22,8 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
 
 
 async def get_user_db():
-    yield SQLAlchemyUserDatabase(SessionDep, User)
+    yield SQLAlchemyUserDatabase(Session(), User)
 
 
-async def get_user_manager(user_db=SessionDep):
+async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)

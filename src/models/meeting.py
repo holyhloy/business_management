@@ -1,11 +1,14 @@
 import uuid
 from datetime import datetime
-from typing import List
+from typing import TYPE_CHECKING, List
 
 from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.base import Base
+
+if TYPE_CHECKING:
+    from src.models.user import User
 
 
 class Meeting(Base):
@@ -28,5 +31,5 @@ class MeetingParticipant(Base):
     meeting_id: Mapped[int] = mapped_column(ForeignKey("meetings.id"))
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
 
-    meeting: Mapped["Meeting"] = relationship(back_populates="participants")
+    meeting: Mapped[Meeting] = relationship(back_populates="participants")
     user: Mapped["User"] = relationship(back_populates="meetings")

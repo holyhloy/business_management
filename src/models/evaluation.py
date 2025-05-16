@@ -1,10 +1,15 @@
 import enum
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Enum, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.base import Base
+
+if TYPE_CHECKING:
+    from src.models.task import Task
+    from src.models.user import User
 
 
 class ScoreEnum(int, enum.Enum):
