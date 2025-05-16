@@ -1,28 +1,23 @@
+import uuid
 from typing import Optional
-from uuid import UUID
 
-from pydantic import BaseModel, EmailStr, ConfigDict
-
-class UserCreateSchema(BaseModel):
-    first_name: str = None
-    last_name: str = None
-    email: EmailStr
-    password: str
+from fastapi_users import schemas
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
-class UserReadSchema(BaseModel):
-    id: UUID
-    first_name: str = None
-    last_name: str = None
-    email: EmailStr
+class UserCreateSchema(schemas.BaseUserCreate):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+
+
+class UserReadSchema(schemas.BaseUser[uuid.UUID]):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     role: str
-    team_id: Optional[int]
-
-    model_config = ConfigDict(from_attributes=True)
+    team_id: Optional[int] = None
 
 
-class UserUpdateSchema(BaseModel):
-    first_name: str = None
-    last_name: str = None
-    email: Optional[EmailStr] = None
+class UserUpdateSchema(schemas.BaseUserUpdate):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     role: Optional[str] = None
