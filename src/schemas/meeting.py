@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class MeetingBaseSchema(BaseModel):
@@ -19,5 +19,4 @@ class MeetingReadSchema(MeetingBaseSchema):
     id: int
     participants: List[UUID]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

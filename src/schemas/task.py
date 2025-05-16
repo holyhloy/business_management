@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class TaskStatus(str, Enum):
@@ -29,5 +29,4 @@ class TaskReadSchema(TaskBaseSchema):
     team_id: int
     assignee_id: UUID
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
