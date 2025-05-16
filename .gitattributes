@@ -1,2 +1,3 @@
 migrations/env.py text eol=lf
 migrations/script.py.mako text eol=lf
+migrations/versions/*.py text eol=lf
