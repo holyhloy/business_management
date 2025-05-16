@@ -9,6 +9,8 @@ from src.models.base import Base
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
+    first_name: Mapped[str]
+    last_name: Mapped[str]
     team_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("teams.id"), nullable=True
     )
