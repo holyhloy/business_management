@@ -1,19 +1,20 @@
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel
 
 
-class EvaluationCreateSchema(BaseModel):
+class CommentCreateSchema(BaseModel):
     task_id: int
-    user_id: UUID
-    score: int
+    content: str
 
 
-class EvaluationReadSchema(BaseModel):
+class CommentReadSchema(BaseModel):
     id: int
     task_id: int
     user_id: UUID
-    score: int
+    content: str
+    created_at: datetime
 
     class Config:
         orm_mode = True
