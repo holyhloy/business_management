@@ -19,3 +19,6 @@ class Team(Base):
 
     users: Mapped[List["User"]] = relationship(back_populates="team")
     tasks: Mapped[List["Task"]] = relationship(back_populates="team")
+
+    def __repr__(self):
+        return self.name

@@ -34,3 +34,6 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     tasks: Mapped[List["Task"]] = relationship(back_populates="assignee")
     evaluations: Mapped[List["Evaluation"]] = relationship(back_populates="user")
     meetings: Mapped[List["MeetingParticipant"]] = relationship(back_populates="user")
+
+    def __repr__(self):
+        return self.email

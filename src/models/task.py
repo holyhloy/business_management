@@ -43,6 +43,9 @@ class Task(Base):
         back_populates="task", uselist=False
     )
 
+    def __repr__(self):
+        return self.title
+
 
 class TaskComment(Base):
     __tablename__ = "task_comments"
