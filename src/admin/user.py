@@ -1,8 +1,8 @@
-from wtforms import StringField, PasswordField
+from fastapi_users.password import PasswordHelper
+from wtforms import PasswordField
 
 from src.admin.base import BaseAdmin
 from src.models.user import User
-from fastapi_users.password import PasswordHelper
 
 
 class UserAdmin(BaseAdmin, model=User):
