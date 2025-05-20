@@ -42,7 +42,11 @@ def upgrade() -> None:
     op.create_table(
         "user",
         sa.Column("team_id", sa.Integer(), nullable=True),
-        sa.Column("role", sa.String(), nullable=False),
+        sa.Column(
+            "role",
+            sa.Enum("EMPLOYEE", "MANAGER", "ADMIN", name="roleenum"),
+            nullable=False,
+        ),
         sa.Column("id", fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
         sa.Column("email", sa.String(length=320), nullable=False),
         sa.Column("hashed_password", sa.String(length=1024), nullable=False),
@@ -81,9 +85,7 @@ def upgrade() -> None:
         sa.Column("deadline", sa.DateTime(), nullable=True),
         sa.Column(
             "status",
-            sa.Enum(
-                "open", "in_progress", "completed", name="taskstatus", create_type=False
-            ),
+            sa.Enum("open", "in_progress", "completed", name="taskstatus"),
             nullable=False,
         ),
         sa.Column("team_id", sa.Integer(), nullable=False),
@@ -116,7 +118,6 @@ def upgrade() -> None:
                 "FOUR",
                 "FIVE",
                 name="scoreenum",
-                create_type=False,
             ),
             nullable=False,
         ),

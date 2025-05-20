@@ -12,6 +12,8 @@ class Settings(BaseSettings):
 
     REDIS_HOST: str
 
+    SECRET_KEY: str
+
     model_config = SettingsConfigDict(env_file=".env")
 
     @property

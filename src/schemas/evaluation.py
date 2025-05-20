@@ -1,7 +1,7 @@
 import enum
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ScoreEnum(int, enum.Enum):
@@ -24,5 +24,4 @@ class EvaluationReadSchema(BaseModel):
     user_id: UUID
     score: ScoreEnum
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
