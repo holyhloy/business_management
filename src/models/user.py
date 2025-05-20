@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, List, Optional
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 from sqlalchemy import ForeignKey, String
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.base import Base
@@ -22,6 +23,9 @@ class RoleEnum(str, enum.Enum):
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     first_name: Mapped[str] = mapped_column(String(64), nullable=True)
     last_name: Mapped[str] = mapped_column(String(128), nullable=True)
     team_id: Mapped[Optional[int]] = mapped_column(
