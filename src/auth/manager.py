@@ -8,8 +8,7 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from src.auth.config import SECRET
 from src.db.session import Session
 from src.models.user import User
-
-logger = logging.getLogger("app")
+from src.core.logging_config import logger
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
