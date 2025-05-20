@@ -3,13 +3,11 @@ from typing import TYPE_CHECKING, Annotated
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth.auth import current_user
 from src.db.session import get_session
 from src.models.user import RoleEnum, User
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
-
-if TYPE_CHECKING:
-    from src.auth.auth import current_user
 
 
 def require_role(required_role: RoleEnum):

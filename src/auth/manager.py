@@ -1,4 +1,3 @@
-import logging
 import uuid
 
 from fastapi import Depends
@@ -6,9 +5,9 @@ from fastapi_users import BaseUserManager, UUIDIDMixin
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
 from src.auth.config import SECRET
+from src.core.logging_config import logger
 from src.db.session import Session
 from src.models.user import User
-from src.core.logging_config import logger
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):

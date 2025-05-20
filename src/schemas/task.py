@@ -24,6 +24,10 @@ class TaskCreateSchema(TaskBaseSchema):
     assignee_id: UUID
 
 
+class TaskUpdateSchema(TaskCreateSchema):
+    pass
+
+
 class TaskReadSchema(TaskBaseSchema):
     id: int
     team_id: int
