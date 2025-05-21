@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from fastapi import HTTPException
 from sqlalchemy import delete, select, update
 from sqlalchemy.exc import IntegrityError

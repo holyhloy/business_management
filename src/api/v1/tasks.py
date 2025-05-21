@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from src.api.deps import SessionDep, require_role
+from src.auth.auth import current_user
 from src.models.user import RoleEnum, User
+from src.schemas.comment import CommentReadSchema
 from src.schemas.task import TaskCreateSchema, TaskReadSchema, TaskUpdateSchema
+from src.schemas.user import UserReadSchema
 from src.services.task_service import *
 
 router = APIRouter(prefix="/tasks", tags=["Задачи"])
@@ -19,11 +22,7 @@ async def create_task_endpoint(
 
 @router.get("/{task_id}", response_model=TaskReadSchema)
 async def get_task_endpoint(task_id: int, session: SessionDep):
-    task = await get_task(session, task_id)
-    if task:
-        return task
-    else:
-        raise HTTPException(status_code=404, detail=f"Task with ID {task_id} not found")
+    return await get_task(session, task_id)
 
 
 @router.put("/{task_id}", response_model=TaskReadSchema)
@@ -42,3 +41,22 @@ async def delete_task_endpoint(
 ):
     await delete_task(session, task_id)
     return {"status": "deleted"}
+
+
+@router.post("/{task_id}/comments", response_model=CommentReadSchema)
+async def add_comment(
+    task_id: int,
+    comment: CommentCreateSchema,
+    session: SessionDep,
+    user: UserReadSchema = Depends(current_user),
+):
+    return await add_comment_to_task(session, task_id, user.id, comment)
+
+
+@router.get("/{task_id}/comments", response_model=list[CommentReadSchema])
+async def get_comments(
+    task_id: int,
+    session: SessionDep,
+    _: UserReadSchema = Depends(current_user),
+):
+    return await get_comments_for_task(session, task_id)

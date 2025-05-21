@@ -1,10 +1,14 @@
 from uuid import UUID
 
+from fastapi import HTTPException
 from sqlalchemy import delete, select, update
+from sqlalchemy.exc import IntegrityError
 
 from src.api.deps import SessionDep
 from src.core.logging_config import logger
+from src.models import TaskComment
 from src.models.task import Task
+from src.schemas.comment import CommentCreateSchema
 from src.schemas.task import TaskCreateSchema, TaskUpdateSchema
 
 
@@ -19,7 +23,11 @@ async def create_task(session: SessionDep, data: TaskCreateSchema) -> Task:
 
 async def get_task(session: SessionDep, task_id: int) -> Task | None:
     result = await session.execute(select(Task).where(Task.id == task_id))
-    return result.scalar_one_or_none()
+    task = result.scalar_one_or_none()
+    if task:
+        return task
+    else:
+        raise HTTPException(status_code=404, detail=f"Task with ID {task_id} not found")
 
 
 # функция пока без надобности, но может пригодиться
@@ -48,3 +56,29 @@ async def delete_task(session: SessionDep, task_id: int) -> bool:
     await session.execute(stmt)
     await session.commit()
     return True
+
+
+async def add_comment_to_task(
+    session: SessionDep, task_id: int, user_id: UUID, comment_data: CommentCreateSchema
+) -> TaskComment:
+    comment = TaskComment(
+        task_id=task_id,
+        user_id=user_id,
+        content=comment_data.content,
+    )
+    session.add(comment)
+    try:
+        await session.commit()
+        await session.refresh(comment)
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail=f"Task with ID {task_id} not found")
+    return comment
+
+
+async def get_comments_for_task(session: SessionDep, task_id: int) -> list[TaskComment]:
+    result = await session.execute(
+        select(TaskComment)
+        .where(TaskComment.task_id == task_id)
+        .order_by(TaskComment.created_at)
+    )
+    return result.scalars().all()
