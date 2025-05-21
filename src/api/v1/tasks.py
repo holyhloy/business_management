@@ -1,6 +1,4 @@
-
-
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from src.api.deps import SessionDep, require_role
 from src.models.user import RoleEnum, User
@@ -17,6 +15,15 @@ async def create_task_endpoint(
     _: User = Depends(require_role(RoleEnum.ADMIN)),
 ):
     return await create_task(session, data)
+
+
+@router.get("/{task_id}", response_model=TaskReadSchema)
+async def get_task_endpoint(task_id: int, session: SessionDep):
+    task = await get_task(session, task_id)
+    if task:
+        return task
+    else:
+        raise HTTPException(status_code=404, detail=f"Task with ID {task_id} not found")
 
 
 @router.put("/{task_id}", response_model=TaskReadSchema)

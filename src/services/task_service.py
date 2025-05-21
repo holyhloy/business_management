@@ -22,6 +22,7 @@ async def get_task(session: SessionDep, task_id: int) -> Task | None:
     return result.scalar_one_or_none()
 
 
+# функция пока без надобности, но может пригодиться
 async def list_tasks(session: SessionDep, assignee_id: UUID) -> list[Task]:
     result = await session.execute(select(Task).where(Task.assignee_id == assignee_id))
     return result.scalars().all()
