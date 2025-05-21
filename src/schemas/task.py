@@ -1,15 +1,10 @@
 from datetime import datetime
-from enum import Enum
 from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-
-class TaskStatus(str, Enum):
-    open = "open"
-    in_progress = "in progress"
-    completed = "completed"
+from src.models.task import TaskStatus
 
 
 class TaskBaseSchema(BaseModel):

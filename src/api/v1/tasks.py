@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
-from src.api.deps import SessionDep, require_role
 from src.auth.auth import current_user
+from src.dependencies.deps import require_role
 from src.models.user import RoleEnum, User
 from src.schemas.comment import CommentReadSchema
-from src.schemas.task import TaskCreateSchema, TaskReadSchema, TaskUpdateSchema
+from src.schemas.task import TaskReadSchema
 from src.schemas.user import UserReadSchema
 from src.services.task_service import *
 

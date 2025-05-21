@@ -1,4 +1,3 @@
-# src/models/__init__.py
 from src.models.evaluation import Evaluation
 from src.models.meeting import Meeting, MeetingParticipant
 from src.models.task import Task, TaskComment

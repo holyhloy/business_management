@@ -40,7 +40,7 @@ class Task(Base):
         back_populates="task", cascade="all, delete"
     )
     evaluation: Mapped[Optional["Evaluation"]] = relationship(
-        back_populates="task", uselist=False
+        back_populates="task", uselist=False, lazy="selectin"
     )
 
     def __repr__(self):

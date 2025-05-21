@@ -1,4 +1,5 @@
 import enum
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
@@ -14,7 +15,6 @@ class ScoreEnum(int, enum.Enum):
 
 class EvaluationCreateSchema(BaseModel):
     task_id: int
-    user_id: UUID
     score: ScoreEnum
 
 
@@ -23,5 +23,6 @@ class EvaluationReadSchema(BaseModel):
     task_id: int
     user_id: UUID
     score: ScoreEnum
+    created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)

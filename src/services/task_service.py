@@ -4,8 +4,8 @@ from fastapi import HTTPException
 from sqlalchemy import delete, select, update
 from sqlalchemy.exc import IntegrityError
 
-from src.api.deps import SessionDep
 from src.core.logging_config import logger
+from src.dependencies.deps import SessionDep
 from src.models import TaskComment
 from src.models.task import Task
 from src.schemas.comment import CommentCreateSchema

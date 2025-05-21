@@ -1,5 +1,6 @@
 import enum
 import uuid
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Enum, ForeignKey
@@ -26,7 +27,8 @@ class Evaluation(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), unique=True)
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
-    score: Mapped[ScoreEnum] = mapped_column(Enum(ScoreEnum))
+    score: Mapped[int] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 
     task: Mapped["Task"] = relationship(back_populates="evaluation")
     user: Mapped["User"] = relationship(back_populates="evaluations")

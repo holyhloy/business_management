@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 
-from src.api.deps import SessionDep, require_role
+from src.dependencies.deps import require_role
 from src.models.user import RoleEnum, User
-from src.schemas.team import TeamCreateSchema, TeamReadSchema, TeamUpdateSchema
+from src.schemas.team import TeamReadSchema
 from src.services.team_service import *
 
 router = APIRouter(prefix="/teams", tags=["Команды"])

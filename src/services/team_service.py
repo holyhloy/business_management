@@ -2,8 +2,8 @@ from fastapi import HTTPException
 from sqlalchemy import delete, select, update
 from sqlalchemy.exc import IntegrityError
 
-from src.api.deps import SessionDep
 from src.core.logging_config import logger
+from src.dependencies.deps import SessionDep
 from src.models.team import Team
 from src.schemas.team import TeamCreateSchema, TeamUpdateSchema
 
