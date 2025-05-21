@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from src.api.v1.auth import router as auth_router
+from src.api.v1.calendar import router as calendar_router
 from src.api.v1.evaluations import router as evals_router
 from src.api.v1.meetings import router as meetings_router
 from src.api.v1.tasks import router as tasks_router
@@ -12,3 +13,4 @@ main_router.include_router(tasks_router)
 main_router.include_router(teams_router)
 main_router.include_router(evals_router)
 main_router.include_router(meetings_router)
+main_router.include_router(calendar_router)

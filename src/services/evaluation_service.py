@@ -16,7 +16,7 @@ from src.schemas.evaluation import EvaluationCreateSchema
 async def create_evaluation(
     data: EvaluationCreateSchema, session: SessionDep
 ) -> Evaluation:
-    # Найдём задачу
+
     result = await session.execute(select(Task).where(Task.id == data.task_id))
     task = result.scalar_one_or_none()
 
@@ -26,13 +26,11 @@ async def create_evaluation(
     if not task.assignee_id:
         raise HTTPException(status_code=400, detail="Task has no assignee")
 
-    # Проверка: задача завершена
     if task.status != TaskStatus.completed:
         raise HTTPException(
             status_code=400, detail="Only completed tasks can be evaluated"
         )
 
-    # Проверка: на задачу уже есть оценка
     if task.evaluation:
         raise HTTPException(
             status_code=400, detail="This task already has an evaluation"
