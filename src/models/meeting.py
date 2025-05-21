@@ -20,7 +20,7 @@ class Meeting(Base):
     end_time: Mapped[datetime] = mapped_column(DateTime)
 
     participants: Mapped[List["MeetingParticipant"]] = relationship(
-        back_populates="meeting", cascade="all, delete"
+        back_populates="meeting", cascade="all, delete", lazy="selectin"
     )
 
 
@@ -31,5 +31,7 @@ class MeetingParticipant(Base):
     meeting_id: Mapped[int] = mapped_column(ForeignKey("meetings.id"))
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
 
-    meeting: Mapped[Meeting] = relationship(back_populates="participants")
-    user: Mapped["User"] = relationship(back_populates="meetings")
+    meeting: Mapped[Meeting] = relationship(
+        back_populates="participants", lazy="selectin"
+    )
+    user: Mapped["User"] = relationship(back_populates="meetings", lazy="selectin")
