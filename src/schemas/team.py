@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
+from src.schemas.user import UserReadShortSchema
+
 
 class TeamBaseSchema(BaseModel):
     name: str
@@ -9,10 +11,15 @@ class TeamBaseSchema(BaseModel):
 
 
 class TeamCreateSchema(TeamBaseSchema):
-    pass
+    users: Optional[list[UserReadShortSchema]] = None
 
 
-class TeamReadSchema(TeamBaseSchema):
+class TeamUpdateSchema(TeamCreateSchema):
+    name: Optional[str] = None
+    code: Optional[str] = None
+
+
+class TeamReadSchema(TeamCreateSchema):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
