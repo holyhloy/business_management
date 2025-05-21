@@ -43,6 +43,7 @@ async def update_team(
         )
     team = result.scalar_one_or_none()
     await session.commit()
+    logger.info(f"Team {data.name} edited")
     return team
 
 
@@ -50,4 +51,5 @@ async def delete_team(session: SessionDep, team_id: int) -> bool:
     stmt = delete(Team).where(Team.id == team_id)
     await session.execute(stmt)
     await session.commit()
+    logger.info(f"Team with ID {team_id} deleted")
     return True

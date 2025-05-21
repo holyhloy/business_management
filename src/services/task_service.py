@@ -70,6 +70,7 @@ async def add_comment_to_task(
     try:
         await session.commit()
         await session.refresh(comment)
+        logger.info(f"Comment {comment_data.id} for task {comment_data.task_id} created")
     except IntegrityError:
         raise HTTPException(status_code=404, detail=f"Task with ID {task_id} not found")
     return comment
