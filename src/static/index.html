@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Главная страница</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #444;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 1rem 1.5rem;
+      display: inline-block;
+    }
+    nav a:hover {
+      background-color: #666;
+    }
+    main {
+      padding: 2rem;
+      text-align: center;
+    }
+    .placeholder {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Добро пожаловать!</h1>
+  </header>
+  <nav>
+    <a href="/static/users.html">Пользователи</a>
+    <a href="/static/evaluations.html">Оценки</a>
+    <a href="/static/meetings.html">Встречи</a>
+    <a href="/static/tasks.html">Задачи</a>
+    <a href="/static/teams.html">Команды</a>
+    <a href="/static/calendar.html">Календарь</a>
+  </nav>
+  <main>
+    <div class="placeholder">
+      <p>Выберите раздел для взаимодействия с API.</p>
+    </div>
+  </main>
+</body>
+</html>

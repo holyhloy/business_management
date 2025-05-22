@@ -3,10 +3,10 @@ from logging.config import dictConfig
 from typing import Any, AsyncGenerator
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
@@ -18,7 +18,7 @@ from src.admin.task import TaskAdmin, TaskCommentAdmin
 from src.admin.team import TeamAdmin
 from src.admin.user import UserAdmin
 from src.api.v1 import main_router
-from src.auth.auth import admin_auth_backend
+from src.auth.auth import admin_auth_backend, current_user, fastapi_users
 from src.core.cache_config import cache_key_builder
 from src.core.config import settings
 from src.core.logging_config import LOGGING_CONFIG
@@ -83,6 +83,26 @@ admin.add_view(MeetingParticipantAdmin)
 app.mount("/static", StaticFiles(directory="src/static"), name="static")
 
 
-@app.get("/", include_in_schema=False)
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/auth")
+
+
+@app.get("/index", include_in_schema=False)
 async def index():
+    return FileResponse("src/static/index.html")
+
+
+@app.get("/users", include_in_schema=False)
+async def users_index():
+    return FileResponse("src/static/users.html")
+
+
+current_user_optional = fastapi_users.current_user(optional=True)
+
+
+@app.get("/auth")
+async def redirect_auth(user: User = Depends(current_user_optional)):
+    if user is not None:
+        return RedirectResponse(url="/index")
     return FileResponse("src/static/auth.html")
