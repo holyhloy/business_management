@@ -11,6 +11,7 @@ from src.admin.task import TaskAdmin, TaskCommentAdmin
 from src.admin.team import TeamAdmin
 from src.admin.user import UserAdmin
 from src.api.v1 import main_router
+from src.auth.auth import admin_auth_backend
 from src.core.logging_config import LOGGING_CONFIG
 from src.db.init_db import create_db
 from src.db.session import engine
@@ -21,7 +22,7 @@ dictConfig(LOGGING_CONFIG)
 app = FastAPI(title="Business management system")
 app.include_router(main_router)
 
-admin = Admin(app, engine)
+admin = Admin(app, engine, authentication_backend=admin_auth_backend)
 
 admin.add_view(UserAdmin)
 admin.add_view(TeamAdmin)
