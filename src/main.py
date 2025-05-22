@@ -4,6 +4,9 @@ from typing import Any, AsyncGenerator
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
@@ -56,6 +59,15 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[Any, Any | None]:
 dictConfig(LOGGING_CONFIG)
 
 app = FastAPI(title="Business management system", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(main_router)
 
 admin = Admin(app, engine, authentication_backend=admin_auth_backend)
@@ -67,3 +79,10 @@ admin.add_view(TaskCommentAdmin)
 admin.add_view(EvaluationAdmin)
 admin.add_view(MeetingAdmin)
 admin.add_view(MeetingParticipantAdmin)
+
+app.mount("/static", StaticFiles(directory="src/static"), name="static")
+
+
+@app.get("/", include_in_schema=False)
+async def index():
+    return FileResponse("src/static/auth.html")

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>FastAPI Users Auth</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+      background-color: #f9f9f9;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #333;
+      margin-top: 30px;
+    }
+
+    form {
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 8px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px;
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .info {
+      margin-top: 20px;
+      background-color: #e9ecef;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h2>Регистрация</h2>
+  <form id="register-form">
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="password" placeholder="Password" required />
+    <button type="submit">Зарегистрироваться</button>
+  </form>
+
+  <h2>Логин</h2>
+  <form id="login-form">
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="password" placeholder="Password" required />
+    <button type="submit">Войти</button>
+  </form>
+
+  <h2>Профиль</h2>
+  <button id="get-me">Получить /users/me</button>
+  <pre id="user-info" class="info"></pre>
+
+  <h2>Выход</h2>
+  <button id="logout">Выйти</button>
+
+  <script>
+    const backendUrl = "http://127.0.0.1:8186";
+
+    document.getElementById("register-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const res = await fetch(`${backendUrl}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email.value, password: form.password.value }),
+      });
+      alert(res.ok ? "Регистрация успешна" : "Ошибка регистрации");
+    });
+
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const res = await fetch(`${backendUrl}/auth/jwt/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          username: form.email.value,
+          password: form.password.value,
+        }),
+        credentials: "include",
+      });
+      alert(res.ok ? "Вход выполнен" : "Ошибка входа");
+    });
+
+    document.getElementById("get-me").addEventListener("click", async () => {
+      const res = await fetch(`${backendUrl}/users/me`, {
+        credentials: "include",
+      });
+
+      const el = document.getElementById("user-info");
+      if (res.ok) {
+        const data = await res.json();
+        el.textContent = JSON.stringify(data, null, 2);
+        el.classList.remove("error");
+      } else {
+        el.textContent = "Ошибка запроса /users/me";
+        el.classList.add("error");
+      }
+    });
+
+    document.getElementById("logout").addEventListener("click", async () => {
+      const res = await fetch(`${backendUrl}/auth/jwt/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      alert(res.ok ? "Выход выполнен" : "Ошибка при выходе");
+    });
+  </script>
+</body>
+</html>
