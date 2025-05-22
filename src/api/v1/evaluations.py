@@ -2,8 +2,10 @@ from datetime import date
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
 
 from src.auth.auth import current_user
+from src.core.cache_config import cache_key_builder
 from src.dependencies.deps import SessionDep, require_role
 from src.models.user import RoleEnum, User
 from src.schemas.evaluation import EvaluationCreateSchema, EvaluationReadSchema
@@ -25,6 +27,7 @@ async def rate_task(
 
 
 @router.get("/my", response_model=list[EvaluationReadSchema])
+@cache(key_builder=cache_key_builder)
 async def my_scores(
     session: SessionDep,
     user: UserReadSchema = Depends(current_user),
@@ -34,6 +37,7 @@ async def my_scores(
 
 
 @router.get("/average")
+@cache(key_builder=cache_key_builder)
 async def average_score(
     start: date,
     end: date,

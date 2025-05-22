@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
 
+from src.core.cache_config import cache_key_builder
 from src.dependencies.deps import require_role
 from src.models.user import RoleEnum, User
 from src.schemas.team import TeamReadSchema
@@ -18,6 +20,7 @@ async def create_team_endpoint(
 
 
 @router.get("/{team_id}", response_model=TeamReadSchema)
+@cache(key_builder=cache_key_builder)
 async def get_team_endpoint(team_id: int, session: SessionDep):
     return await get_team(session, team_id)
 

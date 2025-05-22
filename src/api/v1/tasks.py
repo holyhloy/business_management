@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
 
 from src.auth.auth import current_user
+from src.core.cache_config import cache_key_builder
 from src.dependencies.deps import require_role
 from src.models.user import RoleEnum, User
 from src.schemas.comment import CommentReadSchema
@@ -21,6 +23,7 @@ async def create_task_endpoint(
 
 
 @router.get("/{task_id}", response_model=TaskReadSchema)
+@cache(key_builder=cache_key_builder)
 async def get_task_endpoint(task_id: int, session: SessionDep):
     return await get_task(session, task_id)
 
@@ -54,6 +57,7 @@ async def add_comment(
 
 
 @router.get("/{task_id}/comments", response_model=list[CommentReadSchema])
+@cache(key_builder=cache_key_builder)
 async def get_comments(
     task_id: int,
     session: SessionDep,

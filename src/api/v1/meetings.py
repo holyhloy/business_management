@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
 
 from src.auth.auth import current_user
+from src.core.cache_config import cache_key_builder
 from src.dependencies.deps import SessionDep, require_role
 from src.models import User
 from src.models.user import RoleEnum
@@ -23,6 +25,7 @@ async def create_meeting_endpoint(
 
 
 @router.get("/", response_model=list[MeetingReadSchema])
+@cache(key_builder=cache_key_builder)
 async def get_user_meetings(
     session: SessionDep,
     user: UserReadSchema = Depends(current_user),
