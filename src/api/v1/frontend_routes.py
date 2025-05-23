@@ -4,7 +4,9 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from src.auth.auth import fastapi_users
+from src.dependencies.deps import SessionDep
 from src.models import User
+from src.services.user_service import get_all_users
 
 router = APIRouter()
 current_user_optional = fastapi_users.current_user(optional=True)
@@ -59,4 +61,16 @@ async def profile(request: Request, user: User = Depends(current_user_optional))
         return RedirectResponse(url="/auth")
     return templates.TemplateResponse(
         "profile.html", {"request": request, "user": user}
+    )
+
+
+@router.get("/meets", response_class=HTMLResponse)
+async def meets(
+    request: Request, session: SessionDep, user: User = Depends(current_user_optional)
+):
+    if not user:
+        return RedirectResponse(url="/auth")
+    user_list = await get_all_users(session)
+    return templates.TemplateResponse(
+        "meetings.html", {"request": request, "user": user, "users": user_list}
     )

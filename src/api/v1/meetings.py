@@ -20,7 +20,6 @@ async def create_meeting_endpoint(
     session: SessionDep,
     _: User = Depends(require_role(RoleEnum.ADMIN)),
 ):
-    print(data)
     return await create_meeting(data, session)
 
 
