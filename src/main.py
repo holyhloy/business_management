@@ -104,7 +104,7 @@ async def redirect_auth(request: Request, user: User = Depends(current_user_opti
 async def users(request: Request, user: User = Depends(current_user_optional)):
     if not user:
         return RedirectResponse(url="/auth")
-    return templates.TemplateResponse("users.html", {"request": request})
+    return templates.TemplateResponse("users.html", {"request": request, "user": user})
 
 
 @app.get("/index", response_class=HTMLResponse)
@@ -118,4 +118,6 @@ async def index(request: Request, user: User = Depends(current_user_optional)):
 async def evaluations(request: Request, user: User = Depends(current_user_optional)):
     if not user:
         return RedirectResponse(url="/auth")
-    return templates.TemplateResponse("evaluations.html", {"request": request})
+    return templates.TemplateResponse(
+        "evaluations.html", {"request": request, "user": user}
+    )

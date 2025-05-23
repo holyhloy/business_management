@@ -27,6 +27,7 @@
     </form>
   </section>
 
+  {% if user.role == 'admin' %}
   <section>
     <h3>Получить пользователя по ID (/users/{id})</h3>
     <form id="form-get-user">
@@ -80,6 +81,7 @@
     </form>
     <pre id="out-delete-user"></pre>
   </section>
+  {% endif %}
 
   <script>
     const API = `${window.location.protocol}//${window.location.host}`;
