@@ -17,7 +17,6 @@ from src.services.evaluation_service import (create_evaluation,
 router = APIRouter(prefix="/evaluations", tags=["Оценки задач"])
 
 
-
 @router.post("/", response_model=EvaluationReadSchema)
 async def rate_task(
     data: EvaluationCreateSchema,
