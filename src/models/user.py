@@ -34,7 +34,9 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     role: Mapped[RoleEnum] = mapped_column(default=RoleEnum.EMPLOYEE)
     email: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    team: Mapped[Optional["Team"]] = relationship(back_populates="users")
+    team: Mapped[Optional["Team"]] = relationship(
+        back_populates="users", lazy="selectin"
+    )
     tasks: Mapped[List["Task"]] = relationship(back_populates="assignee")
     evaluations: Mapped[List["Evaluation"]] = relationship(
         back_populates="user", cascade="all, delete"
