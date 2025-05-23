@@ -1,7 +1,21 @@
 {% extends "layout.html" %}
 
 {% block title %}Главная страница{% endblock %}
-
+{% block nav_section %}
+  <nav>
+    <a href="/">Главная</a>
+    <a href="/employees">Пользователи</a>
+    <a href="/rates">Оценки</a>
+    <a href="/meetings">Встречи</a>
+    <a href="/tasks">Задачи</a>
+    <a href="/teams">Команды</a>
+    <a href="/calendar">Календарь</a>
+    {% if user.role == 'admin' %}
+    <a href="/admin">Панель администратора</a>
+    {% endif %}
+    <button id="logout">Выйти</button>
+  </nav>
+  {% endblock %}
 {% block content %}
   <h2 style="text-align: center;">Добро пожаловать!</h2>
   <div class="placeholder" style="text-align: center;">

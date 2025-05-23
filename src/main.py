@@ -111,7 +111,7 @@ async def users(request: Request, user: User = Depends(current_user_optional)):
 async def index(request: Request, user: User = Depends(current_user_optional)):
     if not user:
         return RedirectResponse(url="/auth")
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request, "user": user})
 
 
 @app.get("/rates", response_class=HTMLResponse)
