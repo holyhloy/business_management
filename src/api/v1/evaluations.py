@@ -17,6 +17,7 @@ from src.services.evaluation_service import (create_evaluation,
 router = APIRouter(prefix="/evaluations", tags=["Оценки задач"])
 
 
+
 @router.post("/", response_model=EvaluationReadSchema)
 async def rate_task(
     data: EvaluationCreateSchema,
@@ -31,7 +32,6 @@ async def rate_task(
 async def my_scores(
     session: SessionDep,
     user: UserReadSchema = Depends(current_user),
-    _: User = Depends(require_role(RoleEnum.ADMIN)),
 ):
     return await get_user_evaluations(user.id, session)
 

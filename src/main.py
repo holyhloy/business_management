@@ -93,7 +93,14 @@ async def root():
 templates = Jinja2Templates(directory="src/static")
 
 
-@app.get("/users", response_class=HTMLResponse)
+@app.get("/auth", response_class=HTMLResponse)
+async def redirect_auth(request: Request, user: User = Depends(current_user_optional)):
+    if user is not None:
+        return RedirectResponse(url="/index")
+    return templates.TemplateResponse("auth.html", {"request": request})
+
+
+@app.get("/employees", response_class=HTMLResponse)
 async def users(request: Request, user: User = Depends(current_user_optional)):
     if not user:
         return RedirectResponse(url="/auth")
@@ -107,8 +114,8 @@ async def index(request: Request, user: User = Depends(current_user_optional)):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-@app.get("/auth", response_class=HTMLResponse)
-async def redirect_auth(request: Request, user: User = Depends(current_user_optional)):
-    if user is not None:
-        return RedirectResponse(url="/index")
-    return templates.TemplateResponse("auth.html", {"request": request})
+@app.get("/rates", response_class=HTMLResponse)
+async def evaluations(request: Request, user: User = Depends(current_user_optional)):
+    if not user:
+        return RedirectResponse(url="/auth")
+    return templates.TemplateResponse("evaluations.html", {"request": request})
