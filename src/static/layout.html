@@ -86,7 +86,6 @@
     <button id="logout">Выйти</button>
   </header>
   {% endblock %}
-  {% block extra_nav_section %}{% endblock %}
   {% block nav_section %}
   <nav>
     <a href="/">Главная</a>
@@ -96,6 +95,10 @@
     <a href="/teams">Команды</a>
     <a href="/calendar">Календарь</a>
     <a href="/profile">Профиль</a>
+    {% if user.role == 'admin' %}
+    <a href="/admin">Панель администратора</a>
+    <a href="/employees">Пользователи</a>
+    {% endif %}
   </nav>
   {% endblock %}
   <main>

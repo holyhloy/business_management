@@ -26,6 +26,7 @@ from src.core.config import settings
 from src.core.logging_config import LOGGING_CONFIG
 from src.db.init_db import create_db
 from src.db.session import engine
+from src.middleware.auth_context import InjectUserMiddleware
 from src.models import *
 
 
@@ -70,6 +71,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(InjectUserMiddleware)
+
 app.include_router(main_router)
 
 admin = Admin(app, engine, authentication_backend=admin_auth_backend)
@@ -91,6 +94,13 @@ async def root():
 
 
 templates = Jinja2Templates(directory="src/static")
+
+
+def get_user(request):
+    return getattr(request.state, "user", None)
+
+
+templates.env.globals["user"] = get_user
 
 
 @app.get("/auth", response_class=HTMLResponse)
