@@ -83,22 +83,21 @@
   {% block header_section %}
   <header>
     <h1>{% block header %}FastAPI{% endblock %}</h1>
+    <button id="logout">Выйти</button>
   </header>
   {% endblock %}
-
+  {% block extra_nav_section %}{% endblock %}
   {% block nav_section %}
   <nav>
     <a href="/">Главная</a>
-    <a href="/employees">Пользователи</a>
     <a href="/rates">Оценки</a>
     <a href="/meetings">Встречи</a>
     <a href="/tasks">Задачи</a>
     <a href="/teams">Команды</a>
     <a href="/calendar">Календарь</a>
-    <button id="logout">Выйти</button>
+    <a href="/profile">Профиль</a>
   </nav>
   {% endblock %}
-
   <main>
     {% block content %}{% endblock %}
   </main>

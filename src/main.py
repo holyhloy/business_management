@@ -121,3 +121,12 @@ async def evaluations(request: Request, user: User = Depends(current_user_option
     return templates.TemplateResponse(
         "evaluations.html", {"request": request, "user": user}
     )
+
+
+@app.get("/profile", response_class=HTMLResponse)
+async def profile(request: Request, user: User = Depends(current_user_optional)):
+    if not user:
+        return RedirectResponse(url="/auth")
+    return templates.TemplateResponse(
+        "profile.html", {"request": request, "user": user}
+    )

@@ -1,32 +1,16 @@
 {% extends "layout.html" %}
 
 {% block title %}Управление пользователями{% endblock %}
-
+{% block extra_nav_section %}
+  <nav>
+    {% if user.role == 'admin' %}
+    <a href="/admin">Панель администратора</a>
+    <a href="/employees">Пользователи</a>
+    {% endif %}
+  </nav>
+{% endblock %}
 {% block content %}
   <h2>Управление пользователями</h2>
-
-  <section>
-    <h3>Текущий пользователь (/users/me)</h3>
-    <button id="btn-get-me">Получить профиль</button>
-    <pre id="out-me"></pre>
-    <h4>Обновить профиль</h4>
-    <form id="form-patch-me">
-      <label>Email:
-        <input name="email" type="email" placeholder="новый email" />
-      </label>
-      <label>Password:
-        <input name="password" type="password" placeholder="новый пароль" />
-      </label>
-      <label>Имя:
-        <input name="first_name" type="text" placeholder="новое имя" />
-      </label>
-      <label>Фамилия:
-        <input name="last_name" type="text" placeholder="новая фамилия" />
-      </label>
-      <button type="submit">Обновить</button>
-    </form>
-  </section>
-
   {% if user.role == 'admin' %}
   <section>
     <h3>Получить пользователя по ID (/users/{id})</h3>
@@ -86,29 +70,6 @@
   <script>
     const API = `${window.location.protocol}//${window.location.host}`;
     const opts = { credentials: 'include', headers: { 'Content-Type': 'application/json' } };
-
-    document.getElementById('btn-get-me').onclick = async () => {
-      const res = await fetch(`${API}/users/me`, opts);
-      document.getElementById('out-me').textContent = res.ok
-        ? JSON.stringify(await res.json(), null, 2)
-        : `Ошибка ${res.status}`;
-    };
-
-    document.getElementById('form-patch-me').onsubmit = async e => {
-      e.preventDefault();
-      const f = e.target;
-      const body = {};
-      if (f.email.value) body.email = f.email.value;
-      if (f.password.value) body.password = f.password.value;
-      if (f.first_name.value) body.first_name = f.first_name.value;
-      if (f.last_name.value) body.last_name = f.last_name.value;
-      const res = await fetch(`${API}/users/me`, {
-        ...opts, method: 'PATCH', body: JSON.stringify(body)
-      });
-      document.getElementById('out-me').textContent = res.ok
-        ? JSON.stringify(await res.json(), null, 2)
-        : `Ошибка ${res.status}: ${JSON.stringify(await res.json())}`;
-    };
 
     document.getElementById('form-get-user').onsubmit = async e => {
       e.preventDefault();

@@ -1,7 +1,14 @@
 {% extends "layout.html" %}
 
 {% block title %}Оценки задач{% endblock %}
-
+{% block extra_nav_section %}
+  <nav>
+    {% if user.role == 'admin' %}
+    <a href="/admin">Панель администратора</a>
+    <a href="/employees">Пользователи</a>
+    {% endif %}
+  </nav>
+{% endblock %}
 {% block header %}Оценки задач{% endblock %}
 
 {% block content %}
