@@ -5,8 +5,10 @@ from typing import Any, AsyncGenerator
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.requests import Request
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
@@ -80,7 +82,7 @@ admin.add_view(EvaluationAdmin)
 admin.add_view(MeetingAdmin)
 admin.add_view(MeetingParticipantAdmin)
 
-app.mount("/static", StaticFiles(directory="src/static"), name="static")
+current_user_optional = fastapi_users.current_user(optional=True)
 
 
 @app.get("/")
@@ -88,21 +90,25 @@ async def root():
     return RedirectResponse(url="/auth")
 
 
-@app.get("/index", include_in_schema=False)
-async def index():
-    return FileResponse("src/static/index.html")
+templates = Jinja2Templates(directory="src/static")
 
 
-@app.get("/users", include_in_schema=False)
-async def users_index():
-    return FileResponse("src/static/users.html")
+@app.get("/users", response_class=HTMLResponse)
+async def users(request: Request, user: User = Depends(current_user_optional)):
+    if not user:
+        return RedirectResponse(url="/auth")
+    return templates.TemplateResponse("users.html", {"request": request})
 
 
-current_user_optional = fastapi_users.current_user(optional=True)
+@app.get("/index", response_class=HTMLResponse)
+async def index(request: Request, user: User = Depends(current_user_optional)):
+    if not user:
+        return RedirectResponse(url="/auth")
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
-@app.get("/auth")
-async def redirect_auth(user: User = Depends(current_user_optional)):
+@app.get("/auth", response_class=HTMLResponse)
+async def redirect_auth(request: Request, user: User = Depends(current_user_optional)):
     if user is not None:
         return RedirectResponse(url="/index")
-    return FileResponse("src/static/auth.html")
+    return templates.TemplateResponse("auth.html", {"request": request})

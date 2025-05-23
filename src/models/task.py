@@ -31,8 +31,8 @@ class Task(Base):
         Enum(TaskStatus), default=TaskStatus.open
     )
 
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
-    assignee_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=True)
+    assignee_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"), nullable=True)
 
     team: Mapped["Team"] = relationship(back_populates="tasks")
     assignee: Mapped["User"] = relationship(back_populates="tasks")
@@ -40,7 +40,11 @@ class Task(Base):
         back_populates="task", cascade="all, delete"
     )
     evaluation: Mapped[Optional["Evaluation"]] = relationship(
-        back_populates="task", uselist=False, lazy="selectin"
+        back_populates="task",
+        uselist=False,
+        lazy="selectin",
+        cascade="all, delete",
+        passive_deletes=True,
     )
 
     def __repr__(self):

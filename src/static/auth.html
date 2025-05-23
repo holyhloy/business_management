@@ -1,178 +1,71 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <title>FastAPI Users Auth</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-    }
+{% extends "layout.html" %}
+{% block title %}Аутентификация{% endblock %}
+{% block header_section %}{% endblock %}
+{% block nav_section %}{% endblock %}
+{% block content %}
+  <h2>Регистрация</h2>
+  <form id="register-form">
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="password" placeholder="Password" required />
+    <button type="submit">Зарегистрироваться</button>
+  </form>
 
-    header {
-      background-color: #333;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    nav {
-      display: flex;
-      justify-content: center;
-      background-color: #444;
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      padding: 1rem 1.5rem;
-      display: inline-block;
-    }
-
-    nav a:hover {
-      background-color: #666;
-    }
-
-    main {
-      padding: 2rem;
-    }
-
-    h2 {
-      color: #333;
-      margin-top: 30px;
-    }
-
-    form {
-      background-color: white;
-      padding: 1rem;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      max-width: 400px;
-    }
-
-    input {
-      padding: 8px;
-      margin: 5px 0;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    button {
-      padding: 10px;
-      width: 100%;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    .info {
-      margin-top: 20px;
-      background-color: #e9ecef;
-      padding: 10px;
-      border-radius: 5px;
-    }
-
-    .error {
-      color: red;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Аутентификация</h1>
-  </header>
-  <nav>
-    <a href="/static/index.html">Главная</a>
-    <a href="/static/users.html">Пользователи</a>
-  </nav>
-  <main>
-    <h2>Регистрация</h2>
-    <form id="register-form">
-      <input type="email" name="email" placeholder="Email" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Зарегистрироваться</button>
-    </form>
-
-    <h2>Логин</h2>
-    <form id="login-form">
-      <input type="email" name="email" placeholder="Email" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Войти</button>
-    </form>
-
-    <h2>Профиль</h2>
-    <button id="get-me">Получить /users/me</button>
-    <pre id="user-info" class="info"></pre>
-
-    <h2>Выход</h2>
-    <button id="logout">Выйти</button>
-  </main>
-
-  <script>
-    const backendUrl = "http://127.0.0.1:8340";
-
-    document.getElementById("register-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const res = await fetch(`${backendUrl}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: form.email.value, password: form.password.value }),
-      });
-      alert(res.ok ? "Регистрация успешна" : "Ошибка регистрации");
+  <h2>Логин</h2>
+  <form id="login-form">
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="password" placeholder="Password" required />
+    <button type="submit">Войти</button>
+  </form>
+{% endblock %}
+{% block script %}
+<script>
+  document.getElementById("register-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const email = form.email.value;
+    const password = form.password.value;
+    const registerRes = await fetch(`${backendUrl}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
     });
 
-    document.getElementById("login-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const res = await fetch(`${backendUrl}/auth/jwt/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          username: form.email.value,
-          password: form.password.value,
-        }),
-        credentials: "include",
-      });
-      if (res.ok) {
-        window.location.href = "/index";
-      } else {
-        alert("Ошибка входа");
-      }
+    if (!registerRes.ok) {
+      alert("Ошибка регистрации");
+      return;
+    }
+
+    const loginRes = await fetch(`${backendUrl}/auth/jwt/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ username: email, password }),
+      credentials: "include",
     });
 
-    document.getElementById("get-me").addEventListener("click", async () => {
-      const res = await fetch(`${backendUrl}/users/me`, {
-        credentials: "include",
-      });
-      const el = document.getElementById("user-info");
-      if (res.ok) {
-        const data = await res.json();
-        el.textContent = JSON.stringify(data, null, 2);
-        el.classList.remove("error");
-      } else {
-        el.textContent = "Ошибка запроса /users/me";
-        el.classList.add("error");
-      }
-    });
+    if (loginRes.ok) {
+      window.location.href = "/index";
+    } else {
+      alert("Регистрация прошла, но логин не удался");
+    }
+  });
 
-    document.getElementById("logout").addEventListener("click", async () => {
-      const res = await fetch(`${backendUrl}/auth/jwt/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-      alert(res.ok ? "Выход выполнен" : "Ошибка при выходе");
+  document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const res = await fetch(`${backendUrl}/auth/jwt/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        username: form.email.value,
+        password: form.password.value,
+      }),
+      credentials: "include",
     });
-  </script>
-</body>
-</html>
+    if (res.ok) {
+      window.location.href = "/index";
+    } else {
+      alert("Ошибка входа");
+    }
+  });
+</script>
+{% endblock %}

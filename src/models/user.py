@@ -36,7 +36,9 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
 
     team: Mapped[Optional["Team"]] = relationship(back_populates="users")
     tasks: Mapped[List["Task"]] = relationship(back_populates="assignee")
-    evaluations: Mapped[List["Evaluation"]] = relationship(back_populates="user")
+    evaluations: Mapped[List["Evaluation"]] = relationship(
+        back_populates="user", cascade="all, delete"
+    )
     meetings: Mapped[List["MeetingParticipant"]] = relationship(back_populates="user")
 
     def __repr__(self):
