@@ -30,9 +30,13 @@ async def get_task(session: SessionDep, task_id: int) -> Task | None:
         raise HTTPException(status_code=404, detail=f"Task with ID {task_id} not found")
 
 
-# функция пока без надобности, но может пригодиться
 async def list_tasks(session: SessionDep, assignee_id: UUID) -> list[Task]:
     result = await session.execute(select(Task).where(Task.assignee_id == assignee_id))
+    return result.scalars().all()
+
+
+async def list_all_tasks(session: SessionDep) -> list[Task]:
+    result = await session.execute(select(Task))
     return result.scalars().all()
 
 
@@ -70,9 +74,7 @@ async def add_comment_to_task(
     try:
         await session.commit()
         await session.refresh(comment)
-        logger.info(
-            f"Comment {comment_data.id} for task {comment_data.task_id} created"
-        )
+        logger.info(f"Comment {comment.id} for task {comment.task_id} created")
     except IntegrityError:
         raise HTTPException(status_code=404, detail=f"Task with ID {task_id} not found")
     return comment

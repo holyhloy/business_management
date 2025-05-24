@@ -12,7 +12,8 @@ if TYPE_CHECKING:
     from src.models.task import Task
     from src.models.user import User
 
-#TODO: Возможно убрать - не используется
+
+# TODO: Возможно убрать - не используется
 class ScoreEnum(int, enum.Enum):
     ONE = 1
     TWO = 2
@@ -25,7 +26,9 @@ class Evaluation(Base):
     __tablename__ = "evaluations"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), unique=True)
+    task_id: Mapped[int] = mapped_column(
+        ForeignKey("tasks.id", ondelete="cascade"), unique=True
+    )
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
     score: Mapped[int] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())

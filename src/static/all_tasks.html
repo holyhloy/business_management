@@ -1,0 +1,183 @@
+{% extends "layout.html" %}
+
+{% block title %}Задачи{% endblock %}
+
+{% block content %}
+<h1>Задачи</h1>
+
+{% if user and user.role == "admin" %}
+<form id="task-form">
+  <h2>Создать задачу</h2>
+  <input type="hidden" name="team_id" value="{{ user.team.id }}">
+  <input type="text" name="title" placeholder="Заголовок" required />
+  <textarea name="description" placeholder="Описание" required></textarea>
+  <input type="datetime-local" name="deadline" required />
+  <select name="status">
+      <option value="open">Открыто</option>
+      <option value="in_progress">В работе</option>
+      <option value="completed">Выполнено</option>
+  </select>
+  <select name="assignee_id" required>
+    {% for u in users %}
+    <option value="{{ u.id }}">{{ u.email }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Создать</button>
+</form>
+{% endif %}
+
+<div id="tasks-container">
+  {% for task in tasks %}
+  <div class="task-card" data-task-id="{{ task.id }}">
+    <h3>{{ task.title }} — {{ task.status.value }}</h3>
+    <p>{{ task.description }}</p>
+    <p><strong>Дедлайн:</strong> {{ task.deadline }}</p>
+    <p><strong>Исполнитель:</strong> {{ task.assignee.email }}</p>
+
+    {% if user and user.role == "admin" %}
+    <button class="edit-task-button">Изменить</button>
+    <button class="delete-task">Удалить</button>
+    {% endif %}
+
+    <div class="comments">
+      <h3>Комментарии</h3>
+      <div class="comment-list">
+        {% for comment in task.comments %}
+        <p><strong>{{ comment.user.email }}:</strong> {{ comment.content }}</p>
+        {% endfor %}
+      </div>
+      <form class="comment-form">
+        <input type="text" name="content" placeholder="Добавить комментарий" required />
+        <button type="submit">Отправить</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<template id="edit-task-template">
+  <div class="edit-task-form-container">
+    <form class="edit-task-form">
+      <input type="hidden" name="team_id" value="{{ user.team.id }}">
+      <input type="hidden" name="task_id" />
+      <input type="text" name="title" placeholder="Заголовок" required />
+      <textarea name="description" placeholder="Описание" required></textarea>
+      <input type="datetime-local" name="deadline" required />
+      <select name="status">
+        <option value="open">Открыто</option>
+        <option value="in_progress">В работе</option>
+        <option value="completed">Выполнено</option>
+      </select>
+      <select name="assignee_id" required>
+        {% for u in users %}
+        <option value="{{ u.id }}">{{ u.email }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Сохранить изменения</button>
+    </form>
+  </div>
+</template>
+
+{% endblock %}
+{% block script %}
+<script>
+  document.getElementById("task-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const body = {
+      title: f.title.value,
+      description: f.description.value,
+      deadline: f.deadline.value,
+      status: f.status.value,
+      assignee_id: f.assignee_id.value,
+      team_id: f.team_id.value
+    };
+    const res = await fetch("/tasks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) location.reload();
+    else alert("Ошибка при создании задачи");
+  });
+
+  document.querySelectorAll(".edit-task-button").forEach(btn => {
+  btn.onclick = (e) => {
+    const taskDiv = btn.closest(".task-card");
+    const taskId = taskDiv.dataset.taskId;
+
+    document.querySelector(".edit-task-form-container")?.remove();
+
+    const tmpl = document.getElementById("edit-task-template");
+    const formContainer = tmpl.content.cloneNode(true);
+    const form = formContainer.querySelector("form");
+
+    form.task_id.value = taskId;
+    form.title.value = taskDiv.querySelector("h3").innerText.split(" — ")[0];
+    form.description.value = taskDiv.querySelector("p:nth-of-type(1)").innerText;
+    form.deadline.value = new Date(taskDiv.querySelector("p:nth-of-type(2)").innerText.replace("Дедлайн:", "").trim()).toISOString().slice(0,16);
+
+    const assigneeEmail = taskDiv.querySelector("p:nth-of-type(3)").innerText.replace("Исполнитель:", "").trim();
+    const assigneeSelect = form.assignee_id;
+    for (const opt of assigneeSelect.options) {
+      if (opt.textContent.trim() === assigneeEmail) {
+        opt.selected = true;
+        break;
+      }
+    }
+
+    taskDiv.appendChild(formContainer);
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const body = {
+        title: f.title.value,
+        description: f.description.value,
+        deadline: f.deadline.value,
+        status: f.status.value,
+        team_id: f.team_id.value,
+        assignee_id: f.assignee_id.value
+      };
+      const res = await fetch(`/tasks/${f.task_id.value}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      if (res.ok) location.reload();
+      else alert("Ошибка при обновлении задачи");
+    };
+  };
+});
+
+
+
+  document.querySelectorAll(".delete-task").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.closest(".task-card").dataset.taskId;
+      if (confirm("Удалить задачу?")) {
+        const res = await fetch(`/tasks/${id}`, { method: "DELETE" });
+        if (res.ok) location.reload();
+        else alert("Ошибка удаления");
+      }
+    });
+  });
+
+  document.querySelectorAll(".comment-form").forEach(form => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const taskId = f.closest(".task-card").dataset.taskId;
+      const body = { content: f.content.value };
+      const res = await fetch(`/tasks/${taskId}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      if (res.ok) location.reload();
+      else alert("Ошибка отправки комментария");
+    });
+  });
+</script>
+{% endblock %}
+

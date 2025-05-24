@@ -14,7 +14,7 @@ class TaskAdmin(BaseAdmin, model=Task):
     ]
     column_searchable_list = [Task.title]
     column_sortable_list = [Task.id, Task.deadline, Task.status]
-    form_excluded_columns = ["comments", "evaluation", "team", "assignee"]
+    form_excluded_columns = ["comments", "evaluation"]
 
 
 class TaskCommentAdmin(BaseAdmin, model=TaskComment):

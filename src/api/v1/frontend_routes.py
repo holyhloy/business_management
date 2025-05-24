@@ -6,6 +6,7 @@ from fastapi.templating import Jinja2Templates
 from src.auth.auth import fastapi_users
 from src.dependencies.deps import SessionDep
 from src.models import User
+from src.services.task_service import list_all_tasks, list_tasks
 from src.services.user_service import get_all_users
 
 router = APIRouter()
@@ -71,3 +72,43 @@ async def meets(
         return RedirectResponse(url="/auth")
     user_list = await get_all_users(session)
     return render_template("meetings.html", request, {"users": user_list})
+
+
+@router.get("/my_assignments", response_class=HTMLResponse)
+async def my_assignments(
+    request: Request, session: SessionDep, user: User = Depends(current_user_optional)
+):
+    if not user:
+        return RedirectResponse(url="/auth")
+    user_list = await get_all_users(session)
+    tasks_list = await list_tasks(session, user.id)
+    return render_template(
+        "tasks.html", request, {"users": user_list, "tasks": tasks_list}
+    )
+
+
+@router.get("/assignments", response_class=HTMLResponse)
+async def assignments(
+    request: Request, session: SessionDep, user: User = Depends(current_user_optional)
+):
+    if not user:
+        return RedirectResponse(url="/auth")
+    user_list = await get_all_users(session)
+    tasks_list = await list_all_tasks(session)
+    return render_template(
+        "all_tasks.html", request, {"users": user_list, "tasks": tasks_list}
+    )
+
+
+@router.get("/groups", response_class=HTMLResponse)
+async def groups(request: Request, user: User = Depends(current_user_optional)):
+    if not user:
+        return RedirectResponse(url="/auth")
+    return render_template("teams.html", request, {})
+
+
+@router.get("/schedule", response_class=HTMLResponse)
+async def schedule(request: Request, user: User = Depends(current_user_optional)):
+    if not user:
+        return RedirectResponse(url="/auth")
+    return render_template("calendar.html", request, {})
