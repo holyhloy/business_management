@@ -1,4 +1,3 @@
-# services/evaluation_service.py
 import datetime
 from datetime import date
 from uuid import UUID

@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 
 from src.auth.auth import auth_backend, fastapi_users
-from src.models.user import User
 from src.schemas.user import UserCreateSchema, UserReadSchema, UserUpdateSchema
 
 router = APIRouter()

@@ -1,5 +1,4 @@
 from datetime import date
-from uuid import UUID
 
 from fastapi import APIRouter, Depends
 from fastapi_cache.decorator import cache
@@ -10,9 +9,11 @@ from src.dependencies.deps import SessionDep, require_role
 from src.models.user import RoleEnum, User
 from src.schemas.evaluation import EvaluationCreateSchema, EvaluationReadSchema
 from src.schemas.user import UserReadSchema
-from src.services.evaluation_service import (create_evaluation,
-                                             get_average_score,
-                                             get_user_evaluations)
+from src.services.evaluation_service import (
+    create_evaluation,
+    get_average_score,
+    get_user_evaluations,
+)
 
 router = APIRouter(prefix="/evaluations", tags=["Оценки задач"])
 

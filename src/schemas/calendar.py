@@ -6,6 +6,7 @@ from src.schemas.meeting import MeetingReadSchema
 from src.schemas.task import TaskReadSchema
 
 
+# TODO: возможно, убрать
 class CalendarDay(BaseModel):
     date: date
     tasks: list[TaskReadSchema]

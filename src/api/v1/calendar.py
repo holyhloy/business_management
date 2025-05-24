@@ -6,7 +6,6 @@ from fastapi_cache.decorator import cache
 from src.auth.auth import current_user
 from src.core.cache_config import cache_key_builder
 from src.dependencies.deps import SessionDep
-from src.schemas.calendar import CalendarDay
 from src.schemas.user import UserReadSchema
 from src.services.calendar_service import get_calendar_view
 
