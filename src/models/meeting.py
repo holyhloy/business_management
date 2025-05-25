@@ -20,8 +20,11 @@ class Meeting(Base):
     end_time: Mapped[datetime] = mapped_column(DateTime)
 
     participants: Mapped[List["MeetingParticipant"]] = relationship(
-        back_populates="meeting", cascade="all, delete", lazy="selectin"
+        back_populates="meeting", cascade="all, delete", lazy="selectin", uselist=True
     )
+
+    def __repr__(self):
+        return self.title
 
 
 class MeetingParticipant(Base):
@@ -35,3 +38,6 @@ class MeetingParticipant(Base):
         back_populates="participants", lazy="selectin"
     )
     user: Mapped["User"] = relationship(back_populates="meetings", lazy="selectin")
+
+    def __repr__(self):
+        return self.user.email

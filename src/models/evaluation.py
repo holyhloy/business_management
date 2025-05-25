@@ -35,3 +35,6 @@ class Evaluation(Base):
 
     task: Mapped["Task"] = relationship(back_populates="evaluation")
     user: Mapped["User"] = relationship(back_populates="evaluations")
+
+    def __repr__(self):
+        return str(self.score)

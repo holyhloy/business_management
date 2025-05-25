@@ -28,6 +28,7 @@ class UserAdmin(BaseAdmin, model=User):
     form_overrides = {
         "password": PasswordField,
     }
+    name_plural = "Пользователи"
 
     async def scaffold_form(self, rules):
         form_class = await super().scaffold_form()
