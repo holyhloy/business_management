@@ -92,13 +92,10 @@
     <a href="/rates">Оценки</a>
     <a href="/meets">Встречи</a>
     <a href="/my_assignments">Мои задачи</a>
-    <a href="/groups">Команды</a>
     <a href="/schedule">Календарь</a>
     <a href="/profile">Профиль</a>
     {% if user.role == 'admin' %}
     <a href="/admin">Панель администратора</a>
-    <a href="/employees">Пользователи</a>
-    <a href="/assignments">Все задачи</a>
     {% endif %}
   </nav>
   {% endblock %}

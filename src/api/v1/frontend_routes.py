@@ -36,13 +36,6 @@ async def redirect_auth(request: Request, user: User = Depends(current_user_opti
     return render_template("auth.html", request, {})
 
 
-@router.get("/employees", response_class=HTMLResponse)
-async def users(request: Request, user: User = Depends(current_user_optional)):
-    if not user:
-        return RedirectResponse(url="/auth")
-    return render_template("users.html", request, {})
-
-
 @router.get("/index", response_class=HTMLResponse)
 async def index(request: Request, user: User = Depends(current_user_optional)):
     if not user:
@@ -85,26 +78,6 @@ async def my_assignments(
     return render_template(
         "tasks.html", request, {"users": user_list, "tasks": tasks_list}
     )
-
-
-@router.get("/assignments", response_class=HTMLResponse)
-async def assignments(
-    request: Request, session: SessionDep, user: User = Depends(current_user_optional)
-):
-    if not user:
-        return RedirectResponse(url="/auth")
-    user_list = await get_all_users(session)
-    tasks_list = await list_all_tasks(session)
-    return render_template(
-        "all_tasks.html", request, {"users": user_list, "tasks": tasks_list}
-    )
-
-
-@router.get("/groups", response_class=HTMLResponse)
-async def groups(request: Request, user: User = Depends(current_user_optional)):
-    if not user:
-        return RedirectResponse(url="/auth")
-    return render_template("teams.html", request, {})
 
 
 @router.get("/schedule", response_class=HTMLResponse)
