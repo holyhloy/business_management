@@ -15,7 +15,7 @@ class TaskBaseSchema(BaseModel):
 
 
 class TaskCreateSchema(TaskBaseSchema):
-    team_id: int
+    team_id: Optional[int]
     assignee_id: UUID
 
 
