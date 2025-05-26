@@ -41,7 +41,9 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     evaluations: Mapped[List["Evaluation"]] = relationship(
         back_populates="user", cascade="all, delete"
     )
-    meetings: Mapped[List["MeetingParticipant"]] = relationship(back_populates="user")
+    meetings: Mapped[List["MeetingParticipant"]] = relationship(
+        back_populates="user", lazy="selectin"
+    )
 
     def __repr__(self):
         return self.email

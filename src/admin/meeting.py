@@ -1,12 +1,12 @@
 import uuid
 
+from sqlalchemy import and_, delete, or_, select
 from wtforms import SelectMultipleField
 from wtforms.validators import DataRequired
 
 from src.admin.base import BaseAdmin
 from src.models import MeetingParticipant, User
 from src.models.meeting import Meeting
-from sqlalchemy import select, or_, and_, delete
 
 
 class MeetingAdmin(BaseAdmin, model=Meeting):

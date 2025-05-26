@@ -1,7 +1,8 @@
 import uuid
+from calendar import monthrange
 from collections import defaultdict
-from datetime import date, datetime, timedelta
-from typing import Any, Coroutine
+from datetime import date, timedelta
+from typing import Any
 
 from sqlalchemy import and_, select
 
@@ -9,12 +10,25 @@ from src.dependencies.deps import SessionDep
 from src.models import Meeting, MeetingParticipant, Task
 
 
+def get_calendar_days(target_date: date) -> list[date]:
+    first_day = target_date.replace(day=1)
+    last_day = first_day.replace(day=monthrange(first_day.year, first_day.month)[1])
+
+    start_delta = (first_day.weekday()) % 7  # Пн=0, Вс=6
+    start_date = first_day - timedelta(days=start_delta)
+
+    end_delta = 6 - (last_day.weekday() % 7)
+    end_date = last_day + timedelta(days=end_delta)
+
+    total_days = (end_date - start_date).days + 1
+    return [start_date + timedelta(days=i) for i in range(total_days)]
+
+
 async def get_calendar_view(
     user_id: uuid.UUID,
     target_date: date,
     session: SessionDep,
-) -> defaultdict[Any, dict[str, list[Any]]]:
-
+) -> dict[date, dict[str, list[Any]]]:
     start_of_month = target_date.replace(day=1)
     if start_of_month.month == 12:
         next_month = start_of_month.replace(year=start_of_month.year + 1, month=1)
@@ -26,7 +40,7 @@ async def get_calendar_view(
             and_(
                 Task.assignee_id == user_id,
                 Task.deadline >= start_of_month,
-                Task.deadline <= next_month,
+                Task.deadline < next_month,
             )
         )
     )
@@ -45,24 +59,14 @@ async def get_calendar_view(
     )
     meetings = meetings_query.scalars().all()
 
-    # Сборка по дням
-    calendar = {}
-    for t in tasks:
-        d = t.deadline
-        calendar.setdefault(d, {"tasks": [], "meetings": []})
-        calendar[d]["tasks"].append(t)
-
-    for m in meetings:
-        d = m.start_time
-        calendar.setdefault(d, {"tasks": [], "meetings": []})
-        calendar[d]["meetings"].append(m)
-
-    calendar_data = defaultdict(lambda: {"tasks": [], "meetings": []})
+    calendar_data: dict[date, dict[str, list[Any]]] = defaultdict(
+        lambda: {"tasks": [], "meetings": []}
+    )
 
     for task in tasks:
-        calendar_data[task.deadline.date()]["tasks"].append(task)
+        calendar_data[task.deadline.date().isoformat()]["tasks"].append(task)
 
     for meeting in meetings:
-        calendar_data[meeting.start_time.date()]["meetings"].append(meeting)
+        calendar_data[meeting.start_time.date().isoformat()]["meetings"].append(meeting)
 
     return calendar_data

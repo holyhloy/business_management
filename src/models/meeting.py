@@ -40,4 +40,4 @@ class MeetingParticipant(Base):
     user: Mapped["User"] = relationship(back_populates="meetings", lazy="selectin")
 
     def __repr__(self):
-        return self.user.email
+        return self.meeting.title

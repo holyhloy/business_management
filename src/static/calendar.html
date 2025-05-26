@@ -1,10 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "layout.html" %}
 
-</body>
-</html>
+{% block title %}Календарь{% endblock %}
+
+{% block content %}
+<h2>
+  {% if view_mode == "day" %}
+    {{ target_date.strftime('%d.%m.%Y') }} — Детальный просмотр
+  {% else %}
+    Календарь: {{ target_date.strftime('%B %Y') }}
+  {% endif %}
+</h2>
+
+{% if view_mode == "month" %}
+  <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+    <a href="/schedule?target_date={{ prev_month }}&view_mode=month">← Предыдущий месяц</a>
+    <a href="/schedule?target_date={{ next_month }}&view_mode=month">Следующий месяц →</a>
+  </div>
+
+  <table style="width: 100%; border-collapse: collapse; text-align: center;">
+    <thead>
+      <tr>
+        {% for day_name in ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] %}
+          <th style="padding: 8px; background-color: #eee; border: 1px solid #ccc;">{{ day_name }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for week in days|batch(7) %}
+      <tr>
+        {% for day in week %}
+        {% set day_str = day.isoformat() %}
+        {% set is_today = day == target_date %}
+        {% set is_current_month = day.month == target_date.month %}
+
+        <td style="
+            padding: 10px;
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ccc;
+            vertical-align: top;
+            background-color: {{ 'lightblue' if is_today else 'white' if is_current_month else '#f0f0f0' }};
+            ">
+          <a href="/schedule?target_date={{ day }}&view_mode=day"
+             style="font-weight: bold; color: black; text-decoration: none;">
+            {{ day.day }}
+          </a>
+
+          {% if items_by_date[day_str]["tasks"] %}
+            <div style="margin-top: 5px;">
+              <strong>Задачи:</strong>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                {% for task in items_by_date[day_str]["tasks"] %}
+                  <li style="color: green;">{{ task.title }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if items_by_date[day_str]["meetings"] %}
+            <div style="margin-top: 5px;">
+              <strong>Встречи:</strong>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                {% for meeting in items_by_date[day_str]["meetings"] %}
+                  <li style="color: blue;">{{ meeting.title }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% elif view_mode == "day" %}
+  <div style="margin-bottom: 1rem;">
+    <a href="/schedule?target_date={{ target_date.replace(day=1) }}&view_mode=month">← Назад к месяцу</a>
+  </div>
+
+  {% set day_str = target_date.isoformat() %}
+  <h3>Задачи:</h3>
+  {% if items_by_date[day_str]["tasks"] %}
+    <ul>
+      {% for task in items_by_date[day_str]["tasks"] %}
+        <li style="color: green;">
+          <strong>{{ task.title }}</strong><br>
+          Дедлайн: {{ task.deadline.strftime('%d.%m.%Y') }}<br>
+          Описание: {{ task.description or "—" }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Нет задач на этот день.</p>
+  {% endif %}
+
+  <h3>Встречи:</h3>
+  {% if items_by_date[day_str]["meetings"] %}
+    <ul>
+      {% for meeting in items_by_date[day_str]["meetings"] %}
+        <li style="color: blue;">
+          <strong>{{ meeting.title }}</strong><br>
+          Время: {{ meeting.start_time.strftime('%H:%M') }} – {{ meeting.end_time.strftime('%H:%M') }}<br>
+          Описание: {{ meeting.description or "—" }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Нет встреч на этот день.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}

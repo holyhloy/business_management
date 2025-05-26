@@ -1,14 +1,8 @@
-from wtforms import IntegerField, SelectMultipleField, SelectField
-from sqlalchemy import select
-from sqlalchemy.orm import joinedload, selectinload
-from wtforms.validators import DataRequired
+from wtforms import SelectField
 
 from src.admin.base import BaseAdmin
-from src.dependencies.deps import SessionDep
 from src.models import Evaluation
-from src.models.evaluation import ScoreEnum
-from src.models.task import Task, TaskStatus
-from fastapi.requests import Request
+from src.models.task import Task
 
 
 class TaskAdmin(BaseAdmin, model=Task):

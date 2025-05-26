@@ -1,5 +1,3 @@
-import uuid
-
 from fastapi_users.password import PasswordHelper
 from wtforms import PasswordField
 
@@ -13,8 +11,15 @@ class UserAdmin(BaseAdmin, model=User):
         User.first_name,
         User.last_name,
         User.role,
-        User.team_id,
+        User.team,
     ]
+    column_labels = {
+        User.email: "Email",
+        User.first_name: "Имя",
+        User.last_name: "Фамилия",
+        User.role: "Должность",
+        User.team: "Команда",
+    }
     column_searchable_list = [User.email, User.first_name, User.last_name]
     column_sortable_list = [User.email, User.role]
     form_excluded_columns = [
