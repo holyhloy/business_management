@@ -13,8 +13,8 @@
 
 {% if view_mode == "month" %}
   <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-    <a href="/schedule?target_date={{ prev_month }}&view_mode=month">← Предыдущий месяц</a>
-    <a href="/schedule?target_date={{ next_month }}&view_mode=month">Следующий месяц →</a>
+    <a href="/calendar?target_date={{ prev_month }}&view_mode=month">← Предыдущий месяц</a>
+    <a href="/calendar?target_date={{ next_month }}&view_mode=month">Следующий месяц →</a>
   </div>
 
   <table style="width: 100%; border-collapse: collapse; text-align: center;">
@@ -41,7 +41,7 @@
             vertical-align: top;
             background-color: {{ 'lightblue' if is_today else 'white' if is_current_month else '#f0f0f0' }};
             ">
-          <a href="/schedule?target_date={{ day }}&view_mode=day"
+          <a href="/calendar?target_date={{ day }}&view_mode=day"
              style="font-weight: bold; color: black; text-decoration: none;">
             {{ day.day }}
           </a>
@@ -76,7 +76,7 @@
 
 {% elif view_mode == "day" %}
   <div style="margin-bottom: 1rem;">
-    <a href="/schedule?target_date={{ target_date.replace(day=1) }}&view_mode=month">← Назад к месяцу</a>
+    <a href="/calendar?target_date={{ target_date.replace(day=1) }}&view_mode=month">← Назад к месяцу</a>
   </div>
 
   {% set day_str = target_date.isoformat() %}

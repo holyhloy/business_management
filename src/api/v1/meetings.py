@@ -23,7 +23,7 @@ async def create_meeting_endpoint(
     return await create_meeting(data, session)
 
 
-@router.get("/", response_model=list[MeetingReadSchema])
+@router.get("/my", response_model=list[MeetingReadSchema])
 @cache(key_builder=cache_key_builder)
 async def get_user_meetings(
     session: SessionDep,
