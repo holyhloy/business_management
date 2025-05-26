@@ -17,7 +17,7 @@ class Team(Base):
     name: Mapped[str] = mapped_column(String(100), unique=True)
     code: Mapped[Optional[str]] = mapped_column(String(32), unique=True, nullable=True)
 
-    users: Mapped[List["User"]] = relationship(back_populates="team")
+    users: Mapped[List["User"]] = relationship(back_populates="team", lazy="selectin")
     tasks: Mapped[List["Task"]] = relationship(back_populates="team")
 
     def __repr__(self):

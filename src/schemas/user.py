@@ -10,10 +10,18 @@ class UserCreateSchema(schemas.BaseUserCreate):
 
 
 class UserReadSchema(schemas.BaseUser[uuid.UUID]):
+    id: uuid.UUID
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     role: str
     team_id: Optional[int] = None
+
+
+class UserReadShortSchema(schemas.BaseUser[uuid.UUID]):
+    id: uuid.UUID
+    first_name: Optional[str]
+    last_name: Optional[str]
+    email: str
 
 
 class UserUpdateSchema(schemas.BaseUserUpdate):

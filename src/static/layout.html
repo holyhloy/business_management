@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}FastAPI App{% endblock %}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #444;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 1rem 1.5rem;
+      display: inline-block;
+    }
+
+    nav a:hover {
+      background-color: #666;
+    }
+
+    main {
+      max-width: 850px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #666;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+
+    pre {
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+      overflow: auto;
+    }
+
+    h1, h2, h3 {
+      color: #333;
+    }
+  </style>
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+
+  {% block header_section %}
+  <header>
+    <h1>{% block header %}FastAPI{% endblock %}</h1>
+    <button id="logout">Выйти</button>
+  </header>
+  {% endblock %}
+  {% block nav_section %}
+  <nav>
+    <a href="/">Главная</a>
+    <a href="/rates">Оценки</a>
+    <a href="/meets">Встречи</a>
+    <a href="/my_assignments">Мои задачи</a>
+    <a href="/schedule">Календарь</a>
+    <a href="/profile">Профиль</a>
+    {% if user.role == 'admin' %}
+    <a href="/admin">Панель администратора</a>
+    {% endif %}
+  </nav>
+  {% endblock %}
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    const backendUrl = `${window.location.protocol}//${window.location.host}`;
+    const logoutButton = document.getElementById("logout");
+    if (logoutButton) {
+      logoutButton.addEventListener("click", async () => {
+        const res = await fetch(`${backendUrl}/auth/jwt/logout`, {
+          method: "POST",
+          credentials: "include",
+        });
+        window.location.href = '/auth';
+      });
+    }
+  </script>
+
+  {% block script %}{% endblock %}
+</body>
+</html>

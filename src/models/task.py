@@ -31,16 +31,20 @@ class Task(Base):
         Enum(TaskStatus), default=TaskStatus.open
     )
 
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
-    assignee_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=True)
+    assignee_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"), nullable=True)
 
     team: Mapped["Team"] = relationship(back_populates="tasks")
     assignee: Mapped["User"] = relationship(back_populates="tasks")
     comments: Mapped[List["TaskComment"]] = relationship(
-        back_populates="task", cascade="all, delete"
+        back_populates="task", cascade="all, delete", lazy="selectin"
     )
     evaluation: Mapped[Optional["Evaluation"]] = relationship(
-        back_populates="task", uselist=False
+        back_populates="task",
+        uselist=False,
+        lazy="selectin",
+        cascade="all, delete",
+        passive_deletes=True,
     )
 
     def __repr__(self):
@@ -51,10 +55,10 @@ class TaskComment(Base):
     __tablename__ = "task_comments"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"))
+    task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id", ondelete="cascade"))
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
     content: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
 
     task: Mapped[Task] = relationship(back_populates="comments")
-    user: Mapped["User"] = relationship()
+    user: Mapped["User"] = relationship(lazy="selectin")

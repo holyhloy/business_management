@@ -48,3 +48,5 @@ LOGGING_CONFIG = {
         },
     },
 }
+
+logger = logging.getLogger("app")

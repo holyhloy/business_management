@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block title %}Оценки задач{% endblock %}
+
+{% block header %}Оценки задач{% endblock %}
+
+{% block content %}
+  {% if user.role == 'employee' %}
+  <section>
+    <h2>Поставить оценку задаче (/evaluations)</h2>
+    <form id="form-rate-task">
+      <label>UUID Задачи:
+        <input name="task_id" type="text" placeholder="UUID задачи" required>
+      </label>
+      <label>Оценка от 1 до 5:
+        <input name="score" type="number" min="1" max="5" required>
+      </label>
+      <button type="submit">Оценить</button>
+    </form>
+    <pre id="out-rate-task"></pre>
+  </section>
+  {% endif %}
+  <section>
+    <h2>Мои оценки (/evaluations/my)</h2>
+    <button id="btn-my-scores">Получить оценки</button>
+    <pre id="out-my-scores"></pre>
+  </section>
+
+  <section>
+    <h2>Средняя оценка (/evaluations/average)</h2>
+    <form id="form-avg-score">
+      <label>Start:
+        <input name="start" type="date" required>
+      </label>
+      <label>End:
+        <input name="end" type="date" required>
+      </label>
+      <button type="submit">Получить</button>
+    </form>
+    <pre id="out-avg-score"></pre>
+  </section>
+{% endblock %}
+
+{% block script %}
+<script>
+  const API = `${window.location.protocol}//${window.location.host}`;
+  const opts = { credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+
+  const formRateTask = document.getElementById('form-rate-task');
+  if (formRateTask) {
+    formRateTask.onsubmit = async e => {
+      e.preventDefault();
+      const f = e.target;
+      const res = await fetch(`${API}/evaluations`, {
+        ...opts,
+        method: 'POST',
+        body: JSON.stringify({
+          task_id: f.task_id.value,
+          score: parseInt(f.score.value),
+        })
+      });
+      document.getElementById('out-rate-task').textContent = res.ok
+        ? JSON.stringify(await res.json(), null, 2)
+        : `Ошибка ${res.status}: ${JSON.stringify(await res.json())}`;
+    };
+  }
+  document.getElementById('btn-my-scores').onclick = async () => {
+    const res = await fetch(`${API}/evaluations/my`, opts);
+    document.getElementById('out-my-scores').textContent = res.ok
+      ? JSON.stringify(await res.json(), null, 2)
+      : `Ошибка ${res.status}: ${JSON.stringify(await res.json())}`;
+  };
+
+  document.getElementById('form-avg-score').onsubmit = async e => {
+    e.preventDefault();
+    const f = e.target;
+    const params = new URLSearchParams({
+      start: f.start.value,
+      end: f.end.value
+    });
+    const res = await fetch(`${API}/evaluations/average?${params.toString()}`, opts);
+    document.getElementById('out-avg-score').textContent = res.ok
+      ? JSON.stringify(await res.json(), null, 2)
+      : `Ошибка ${res.status}: ${JSON.stringify(await res.json())}`;
+  };
+</script>
+{% endblock %}
