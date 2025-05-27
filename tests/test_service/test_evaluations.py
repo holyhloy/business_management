@@ -1,11 +1,8 @@
 import datetime
-import random
 
 import pytest
 import pytest_asyncio
-from fastapi import HTTPException
-from sqlalchemy import delete, select
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import delete
 
 from src.models import Evaluation
 from src.models.task import Task, TaskStatus
@@ -13,19 +10,13 @@ from src.models.user import User
 from src.schemas.evaluation import EvaluationCreateSchema, ScoreEnum
 from src.schemas.task import TaskCreateSchema
 from src.schemas.team import TeamCreateSchema
-from src.services.evaluation_service import (create_evaluation,
-                                             get_average_score,
-                                             get_user_evaluations)
+from src.services.evaluation_service import (
+    create_evaluation,
+    get_average_score,
+    get_user_evaluations,
+)
 from src.services.task_service import create_task, delete_task
 from src.services.team_service import create_team, delete_team
-
-
-@pytest_asyncio.fixture
-async def users(session):
-    user = User(email="eval_user@example.com", hashed_password="pwd")
-    session.add(user)
-    await session.commit()
-    return [user]
 
 
 @pytest_asyncio.fixture
@@ -39,11 +30,11 @@ async def team(session):
 
 
 @pytest_asyncio.fixture
-async def completed_task(session, team, users):
+async def completed_task(session, team, mock_user):
     task_data = TaskCreateSchema(
         title="Completed Task",
         description="Done",
-        assignee_id=users[0].id,
+        assignee_id=mock_user.id,
         deadline=datetime.datetime.now(),
         team_id=team.id,
     )
@@ -93,17 +84,17 @@ async def test_get_average_score(session, completed_task):
 
 
 @pytest.mark.asyncio
-async def test_get_average_score_invalid_dates(session, users):
+async def test_get_average_score_invalid_dates(session, mock_user):
     start = datetime.date.today()
     end = start - datetime.timedelta(days=1)
     with pytest.raises(Exception) as e:
-        await get_average_score(users[0].id, start, end, session)
+        await get_average_score(mock_user.id, start, end, session)
     assert "Start time must be less or equal" in str(e.value)
 
 
 @pytest.mark.asyncio
-async def test_get_average_score_future_year(session, users):
+async def test_get_average_score_future_year(session, mock_user):
     next_year = datetime.date.today().replace(year=datetime.date.today().year + 1)
     with pytest.raises(Exception) as e:
-        await get_average_score(users[0].id, next_year, next_year, session)
+        await get_average_score(mock_user.id, next_year, next_year, session)
     assert "now" in str(e.value)

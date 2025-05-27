@@ -1,24 +1,15 @@
 import datetime
 
 import pytest
-import pytest_asyncio
 
 from src.models import Meeting, MeetingParticipant, Task, User
 from src.schemas.task import TaskStatus
 from src.services.calendar_service import get_calendar_days, get_calendar_view
 
 
-@pytest_asyncio.fixture
-async def user(session):
-    user = User(email="eval_user@example.com", hashed_password="pwd")
-    session.add(user)
-    await session.commit()
-    return user
-
-
 @pytest.mark.asyncio
-async def test_get_calendar_view(session, user):
-    user_id = user.id
+async def test_get_calendar_view(session, mock_user):
+    user_id = mock_user.id
     today = datetime.date.today()
     deadline = datetime.datetime.combine(today.replace(day=15), datetime.time(12))
     start = datetime.datetime.combine(today.replace(day=20), datetime.time(10))
