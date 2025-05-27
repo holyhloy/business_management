@@ -27,15 +27,6 @@ async def team(session):
     await delete_team(session, team_obj.id)
 
 
-@pytest_asyncio.fixture
-async def users(session):
-    user1 = User(email="user1@example.com", hashed_password="hashed1")
-    user2 = User(email="user2@example.com", hashed_password="hashed2")
-    session.add_all([user1, user2])
-    await session.commit()
-    return [user1, user2]
-
-
 @pytest.mark.asyncio
 async def test_create_and_get_task(session, team, users):
     data = TaskCreateSchema(

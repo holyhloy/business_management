@@ -60,6 +60,8 @@ def set_test_session(override_get_session):
 @pytest_asyncio.fixture
 async def mock_user(session):
     user = User(id=uuid4(), email="eval_user@example.com", hashed_password="pwd")
+    session.add(user)
+    await session.commit()
     return user
 
 
@@ -81,3 +83,12 @@ def override_current_user_optional_none():
     app.dependency_overrides[current_user_optional] = _override
     yield
     app.dependency_overrides.pop(current_user_optional, None)
+
+
+@pytest_asyncio.fixture
+async def users(session):
+    user1 = User(email="user1@example.com", hashed_password="hashed1")
+    user2 = User(email="user2@example.com", hashed_password="hashed2")
+    session.add_all([user1, user2])
+    await session.commit()
+    return [user1, user2]
