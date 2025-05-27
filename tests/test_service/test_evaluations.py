@@ -1,28 +1,14 @@
 import datetime
 
 import pytest
-import pytest_asyncio
-from sqlalchemy import delete
 
 from src.models import Evaluation
 from src.models.task import Task
 from src.models.user import User
 from src.schemas.evaluation import EvaluationCreateSchema, ScoreEnum
-from src.schemas.team import TeamCreateSchema
 from src.services.evaluation_service import (create_evaluation,
                                              get_average_score,
                                              get_user_evaluations)
-from src.services.team_service import create_team, delete_team
-
-
-@pytest_asyncio.fixture
-async def team(session):
-    team_data = TeamCreateSchema(name="Eval Team", code="EVT", users=[])
-    team_obj = await create_team(session, team_data)
-    yield team_obj
-    await session.execute(delete(Task).where(Task.team_id == team_obj.id))
-    await session.commit()
-    await delete_team(session, team_obj.id)
 
 
 @pytest.mark.asyncio

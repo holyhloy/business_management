@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
 
 from src.auth.auth import current_user
 from src.core.config import settings
+from src.core.lisespan import clear_cache
 from src.db.session import get_session
 from src.dependencies.deps import require_role
 from src.frontend.root import current_user_optional
@@ -70,18 +71,20 @@ def set_test_session(override_get_session):
     app.dependency_overrides.pop(get_session, None)
 
 
-@pytest.fixture(autouse=True, scope="session")
-def init_cache():
+@pytest_asyncio.fixture(autouse=True, scope="session")
+async def init_cache():
     FastAPICache.init(InMemoryBackend(), prefix="test-cache")
+    await clear_cache()
 
 
 @pytest_asyncio.fixture
-async def mock_user(session):
+async def mock_user(session, team):
     user = User(
         id=uuid4(),
         email="eval_user@example.com",
         hashed_password="pwd",
         role=RoleEnum.ADMIN,
+        team_id=team.id,
     )
     session.add(user)
     await session.commit()
@@ -147,7 +150,6 @@ async def team(session):
     yield team_obj
     await session.execute(delete(Task).where(Task.team_id == team_obj.id))
     await session.commit()
-    await delete_team(session, team_obj.id)
 
 
 @pytest_asyncio.fixture

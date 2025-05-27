@@ -19,8 +19,13 @@ class TaskCreateSchema(TaskBaseSchema):
     assignee_id: UUID
 
 
-class TaskUpdateSchema(TaskCreateSchema):
-    pass
+class TaskUpdateSchema(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    deadline: Optional[datetime] = None
+    status: Optional[TaskStatus] = None
+    team_id: Optional[int] = None
+    assignee_id: Optional[UUID] = None
 
 
 class TaskReadSchema(TaskBaseSchema):
