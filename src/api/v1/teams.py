@@ -20,7 +20,6 @@ async def create_team_endpoint(
 
 
 @router.get("/{team_id}", response_model=TeamReadSchema)
-@cache(key_builder=cache_key_builder)
 async def get_team_endpoint(team_id: int, session: SessionDep):
     return await get_team(session, team_id)
 

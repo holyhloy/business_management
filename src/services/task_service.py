@@ -59,6 +59,7 @@ async def delete_task(session: SessionDep, task_id: int) -> bool:
     stmt = delete(Task).where(Task.id == task_id)
     await session.execute(stmt)
     await session.commit()
+    logger.info(f"Task with ID {task_id} deleted")
     return True
 
 

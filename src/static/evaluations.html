@@ -5,29 +5,14 @@
 {% block header %}Оценки задач{% endblock %}
 
 {% block content %}
-  {% if user.role == 'employee' %}
   <section>
-    <h2>Поставить оценку задаче (/evaluations)</h2>
-    <form id="form-rate-task">
-      <label>UUID Задачи:
-        <input name="task_id" type="text" placeholder="UUID задачи" required>
-      </label>
-      <label>Оценка от 1 до 5:
-        <input name="score" type="number" min="1" max="5" required>
-      </label>
-      <button type="submit">Оценить</button>
-    </form>
-    <pre id="out-rate-task"></pre>
-  </section>
-  {% endif %}
-  <section>
-    <h2>Мои оценки (/evaluations/my)</h2>
+    <h2>Мои оценки</h2>
     <button id="btn-my-scores">Получить оценки</button>
     <pre id="out-my-scores"></pre>
   </section>
 
   <section>
-    <h2>Средняя оценка (/evaluations/average)</h2>
+    <h2>Средняя оценка</h2>
     <form id="form-avg-score">
       <label>Start:
         <input name="start" type="date" required>

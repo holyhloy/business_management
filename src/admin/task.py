@@ -1,7 +1,7 @@
 from wtforms import SelectField
 
 from src.admin.base import BaseAdmin
-from src.models import Evaluation
+from src.models import Evaluation, User
 from src.models.task import Task
 
 
@@ -31,7 +31,6 @@ class TaskAdmin(BaseAdmin, model=Task):
     name_plural = "Задачи"
 
     async def scaffold_form(self, rules=None):
-        print(rules, "Scaffold")
         form_class = await super().scaffold_form()
         choices = [(None, None)]
         choices.extend([(str(i), str(i)) for i in range(1, 6)])
@@ -44,15 +43,26 @@ class TaskAdmin(BaseAdmin, model=Task):
         return form_class
 
     async def insert_model(self, request, data):
-        print("insert")
         del data["evaluation_score"]
+        team = data["team"]
+        async with self.session_maker() as session:
+            user = await session.get(User, data["assignee"])
+        if team:
+            if int(team) != user.team_id:
+                raise ValueError(f"Пользователь относится к команде {user.team}")
+
         task = await super().insert_model(request, data)
         return task
 
     async def update_model(self, request, pk, data):
-        print("update")
         score = data.pop("evaluation_score", None)
         pk = int(pk)
+        team = data["team"]
+        async with self.session_maker() as session:
+            user = await session.get(User, data["assignee"])
+        if team:
+            if int(team) != user.team_id:
+                raise ValueError(f"Пользователь относится к команде {user.team}")
         task = await super().update_model(request, pk, data)
         try:
             score = int(score)

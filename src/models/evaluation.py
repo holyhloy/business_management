@@ -13,7 +13,6 @@ if TYPE_CHECKING:
     from src.models.user import User
 
 
-# TODO: Возможно убрать - не используется
 class ScoreEnum(int, enum.Enum):
     ONE = 1
     TWO = 2
@@ -33,7 +32,7 @@ class Evaluation(Base):
     score: Mapped[int] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 
-    task: Mapped["Task"] = relationship(back_populates="evaluation")
+    task: Mapped["Task"] = relationship(back_populates="evaluation", lazy="selectin")
     user: Mapped["User"] = relationship(back_populates="evaluations")
 
     def __repr__(self):

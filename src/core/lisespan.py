@@ -5,8 +5,8 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis
 
+from redis import asyncio as aioredis
 from src.core.cache_config import cache_key_builder
 from src.core.config import settings
 from src.db.init_db import create_db

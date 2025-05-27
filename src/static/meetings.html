@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}Встречи{% endblock %}
+{% block header %}Календарь{% endblock %}
 
 {% block content %}
   <h2>Встречи</h2>
@@ -51,7 +52,7 @@
     const opts = { credentials: 'include', headers: { 'Content-Type': 'application/json' } };
 
     document.getElementById('btn-get-meetings').onclick = async () => {
-      const res = await fetch(`${API}/meetings`, opts);
+      const res = await fetch(`${API}/meetings/my`, opts);
       document.getElementById('out-meetings').textContent = res.ok
         ? JSON.stringify(await res.json(), null, 2)
         : `Ошибка ${res.status}`;

@@ -82,17 +82,17 @@
 
   {% block header_section %}
   <header>
-    <h1>{% block header %}FastAPI{% endblock %}</h1>
+    <h1 style="color: white">{% block header %}FastAPI{% endblock %}</h1>
     <button id="logout">Выйти</button>
   </header>
   {% endblock %}
   {% block nav_section %}
   <nav>
     <a href="/">Главная</a>
-    <a href="/rates">Оценки</a>
-    <a href="/meets">Встречи</a>
-    <a href="/my_assignments">Мои задачи</a>
-    <a href="/schedule">Календарь</a>
+    <a href="/evaluations">Оценки</a>
+    <a href="/meetings">Встречи</a>
+    <a href="/tasks">Мои задачи</a>
+    <a href="/calendar">Календарь</a>
     <a href="/profile">Профиль</a>
     {% if user.role == 'admin' %}
     <a href="/admin">Панель администратора</a>

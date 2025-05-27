@@ -23,7 +23,6 @@ async def create_task_endpoint(
 
 
 @router.get("/{task_id}", response_model=TaskReadSchema)
-@cache(key_builder=cache_key_builder)
 async def get_task_endpoint(task_id: int, session: SessionDep):
     return await get_task(session, task_id)
 

@@ -43,7 +43,6 @@ async def create_meeting(data: MeetingCreateSchema, session: SessionDep):
     await session.flush()
 
     for user_id in data.participant_ids:
-        print(user_id, type(user_id))
         session.add(MeetingParticipant(meeting_id=meeting.id, user_id=user_id))
 
     await session.commit()
