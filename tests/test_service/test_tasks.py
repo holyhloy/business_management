@@ -1,30 +1,22 @@
 import datetime
 
 import pytest
-import pytest_asyncio
-from sqlalchemy import delete
 
 from src.models import TaskComment
 from src.models.task import Task
 from src.models.user import User
 from src.schemas.comment import CommentCreateSchema
 from src.schemas.task import TaskCreateSchema, TaskUpdateSchema
-from src.schemas.team import TeamCreateSchema
-from src.services.task_service import (add_comment_to_task, create_task,
-                                       delete_task, get_comments_for_task,
-                                       get_task, list_all_tasks, list_tasks,
-                                       update_task)
-from src.services.team_service import create_team, delete_team
-
-
-@pytest_asyncio.fixture
-async def team(session):
-    team_data = TeamCreateSchema(name="Test Team", code="TST001", users=[])
-    team_obj = await create_team(session, team_data)
-    yield team_obj
-    await session.execute(delete(Task).where(Task.team_id == team_obj.id))
-    await session.commit()
-    await delete_team(session, team_obj.id)
+from src.services.task_service import (
+    add_comment_to_task,
+    create_task,
+    delete_task,
+    get_comments_for_task,
+    get_task,
+    list_all_tasks,
+    list_tasks,
+    update_task,
+)
 
 
 @pytest.mark.asyncio

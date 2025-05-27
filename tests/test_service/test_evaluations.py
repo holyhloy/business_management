@@ -5,17 +5,15 @@ import pytest_asyncio
 from sqlalchemy import delete
 
 from src.models import Evaluation
-from src.models.task import Task, TaskStatus
+from src.models.task import Task
 from src.models.user import User
 from src.schemas.evaluation import EvaluationCreateSchema, ScoreEnum
-from src.schemas.task import TaskCreateSchema
 from src.schemas.team import TeamCreateSchema
 from src.services.evaluation_service import (
     create_evaluation,
     get_average_score,
     get_user_evaluations,
 )
-from src.services.task_service import create_task, delete_task
 from src.services.team_service import create_team, delete_team
 
 
@@ -27,23 +25,6 @@ async def team(session):
     await session.execute(delete(Task).where(Task.team_id == team_obj.id))
     await session.commit()
     await delete_team(session, team_obj.id)
-
-
-@pytest_asyncio.fixture
-async def completed_task(session, team, mock_user):
-    task_data = TaskCreateSchema(
-        title="Completed Task",
-        description="Done",
-        assignee_id=mock_user.id,
-        deadline=datetime.datetime.now(),
-        team_id=team.id,
-    )
-    task = await create_task(session, task_data)
-
-    task.status = TaskStatus.completed
-
-    yield task
-    await delete_task(session, task.id)
 
 
 @pytest.mark.asyncio
