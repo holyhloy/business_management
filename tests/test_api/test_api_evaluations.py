@@ -1,12 +1,9 @@
 from datetime import date, timedelta
-from uuid import uuid4
 
 import pytest
-from httpx import AsyncClient
 
 from src.models import Evaluation
 from src.models.task import Task, TaskStatus
-from src.schemas.evaluation import EvaluationCreateSchema
 
 
 @pytest.mark.asyncio

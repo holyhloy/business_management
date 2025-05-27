@@ -9,11 +9,9 @@ from src.models.task import Task
 from src.models.user import User
 from src.schemas.evaluation import EvaluationCreateSchema, ScoreEnum
 from src.schemas.team import TeamCreateSchema
-from src.services.evaluation_service import (
-    create_evaluation,
-    get_average_score,
-    get_user_evaluations,
-)
+from src.services.evaluation_service import (create_evaluation,
+                                             get_average_score,
+                                             get_user_evaluations)
 from src.services.team_service import create_team, delete_team
 
 

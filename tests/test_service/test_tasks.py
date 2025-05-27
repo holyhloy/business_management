@@ -7,16 +7,10 @@ from src.models.task import Task
 from src.models.user import User
 from src.schemas.comment import CommentCreateSchema
 from src.schemas.task import TaskCreateSchema, TaskUpdateSchema
-from src.services.task_service import (
-    add_comment_to_task,
-    create_task,
-    delete_task,
-    get_comments_for_task,
-    get_task,
-    list_all_tasks,
-    list_tasks,
-    update_task,
-)
+from src.services.task_service import (add_comment_to_task, create_task,
+                                       delete_task, get_comments_for_task,
+                                       get_task, list_all_tasks, list_tasks,
+                                       update_task)
 
 
 @pytest.mark.asyncio
