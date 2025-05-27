@@ -1,5 +1,3 @@
-import datetime
-
 from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse, RedirectResponse

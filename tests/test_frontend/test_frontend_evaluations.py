@@ -9,9 +9,7 @@ async def test_get_front_evaluations_authenticated(
 ):
     response = await client.get("/evaluations", follow_redirects=True)
     assert response.status_code == 200
-    assert (
-        "Оценки" in response.text or "evaluations" in response.text
-    )
+    assert "Оценки" in response.text
 
 
 @pytest.mark.asyncio
