@@ -16,8 +16,8 @@ def render_template(
     if not context:
         context = {}
     user = getattr(request.state, "user", None)
-    context.update({"request": request, "user": user})
-    return templates.TemplateResponse(template_name, context)
+    context.update({"user": user})
+    return templates.TemplateResponse(request, template_name, context)
 
 
 @router.get("/")

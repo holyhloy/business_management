@@ -1,12 +1,27 @@
+from uuid import uuid4
+
 import pytest
 import pytest_asyncio
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
 
 from src.core.config import settings
 from src.db.session import get_session
+from src.frontend.root import current_user_optional
+from src.main import app
 from src.models import *
 from src.models.base import Base
+
+
+@pytest_asyncio.fixture
+async def client():
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://test",
+        follow_redirects=False,
+    ) as client:
+        yield client
 
 
 @pytest_asyncio.fixture()
@@ -37,6 +52,32 @@ def override_get_session(session):
 
 @pytest.fixture(autouse=True)
 def set_test_session(override_get_session):
-    from src.main import app
-
     app.dependency_overrides[get_session] = override_get_session
+    yield
+    app.dependency_overrides.pop(get_session, None)
+
+
+@pytest_asyncio.fixture
+async def mock_user(session):
+    user = User(id=uuid4(), email="eval_user@example.com", hashed_password="pwd")
+    return user
+
+
+@pytest.fixture
+def override_current_user_optional(mock_user):
+    async def _override():
+        return mock_user  # можно вернуть None, если нужен неаутентифицированный
+
+    app.dependency_overrides[current_user_optional] = _override
+    yield
+    app.dependency_overrides.pop(current_user_optional, None)
+
+
+@pytest.fixture
+def override_current_user_optional_none():
+    async def _override():
+        return None
+
+    app.dependency_overrides[current_user_optional] = _override
+    yield
+    app.dependency_overrides.pop(current_user_optional, None)
