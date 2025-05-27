@@ -75,12 +75,16 @@ def set_test_session(override_get_session):
 async def init_cache():
     FastAPICache.init(InMemoryBackend(), prefix="test-cache")
     await clear_cache()
+    yield
+    await clear_cache()
 
 
 @pytest_asyncio.fixture
 async def mock_user(session, team):
     user = User(
         id=uuid4(),
+        first_name="test",
+        last_name="test",
         email="eval_user@example.com",
         hashed_password="pwd",
         role=RoleEnum.ADMIN,
