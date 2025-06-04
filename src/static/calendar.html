@@ -30,7 +30,7 @@
       {% for week in days|batch(7) %}
       <tr>
         {% for day in week %}
-        {% set day_str = day.isoformat() %}
+        {% set day_str = day %}
         {% set is_today = day == current_date %}
         {% set is_current_month = day.month == target_date.month %}
 
@@ -80,7 +80,7 @@
     <a href="/calendar?target_date={{ target_date.replace(day=1) }}&view_mode=month">← Назад к месяцу</a>
   </div>
 
-  {% set day_str = target_date.isoformat() %}
+  {% set day_str = target_date %}
   <h3>Задачи:</h3>
   {% if items_by_date[day_str]["tasks"] %}
     <ul>

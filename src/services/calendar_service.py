@@ -73,9 +73,9 @@ async def get_calendar_view(
     )
 
     for task in tasks:
-        calendar_data[task.deadline.date().isoformat()]["tasks"].append(task)
+        calendar_data[task.deadline.date()]["tasks"].append(task)
 
     for meeting in meetings:
-        calendar_data[meeting.start_time.date().isoformat()]["meetings"].append(meeting)
+        calendar_data[meeting.start_time.date()]["meetings"].append(meeting)
 
     return calendar_data
