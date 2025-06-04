@@ -26,16 +26,19 @@ def get_calendar_days(target_date: date) -> list[date]:
     return [start_date + timedelta(days=i) for i in range(total_days)]
 
 
+def get_next_month_start(current: date) -> date:
+    if current.month == 12:
+        return date(current.year + 1, 1, 1)
+    return date(current.year, current.month + 1, 1)
+
+
 async def get_calendar_view(
     user_id: uuid.UUID,
     target_date: date,
     session: SessionDep,
 ) -> dict[date, dict[str, list[Any]]]:
     start_of_month = target_date.replace(day=1)
-    if start_of_month.month == 12:
-        next_month = start_of_month.replace(year=start_of_month.year + 1, month=1)
-    else:
-        next_month = start_of_month.replace(month=start_of_month.month + 1)
+    next_month = get_next_month_start(start_of_month)
 
     tasks_query = await session.execute(
         select(Task).where(
