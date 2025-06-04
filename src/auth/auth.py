@@ -91,7 +91,7 @@ class AdminAuth(AdminBackend):
         return False
 
     async def logout(self, request: Request) -> RedirectResponse:
-        user = request.session["admin_user_id"]
+        user = request.get("admin_user_id")
         request.session.clear()
         logger.info(f"User {user} has been logged out of admin panel successfully")
         return RedirectResponse(url="/admin/login", status_code=302)
