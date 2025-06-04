@@ -11,7 +11,7 @@ templates = Jinja2Templates(directory="src/static")
 
 
 def render_template(
-    template_name: str, request: Request, context: dict
+    template_name: str, request: Request, context: dict = None
 ) -> HTMLResponse:
     if not context:
         context = {}
