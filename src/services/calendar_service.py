@@ -11,8 +11,9 @@ from src.models import Meeting, MeetingParticipant, Task
 
 
 def get_calendar_days(target_date: date) -> list[date]:
-    first_day = target_date.replace(day=1)
-    last_day = first_day.replace(day=monthrange(first_day.year, first_day.month)[1])
+    year, month = target_date.year, target_date.month
+    first_day = date(year, month, 1)
+    last_day = date(year, month, monthrange(year, month)[1])
 
     start_delta = (first_day.weekday()) % 7  # Пн=0, Вс=6
     start_date = first_day - timedelta(days=start_delta)
