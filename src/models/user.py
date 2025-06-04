@@ -32,7 +32,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
         ForeignKey("teams.id"), nullable=True
     )
     role: Mapped[RoleEnum] = mapped_column(default=RoleEnum.EMPLOYEE)
-    email: Mapped[str] = mapped_column(String(100), nullable=False)
+    email: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
 
     team: Mapped[Optional["Team"]] = relationship(
         back_populates="users", lazy="selectin"

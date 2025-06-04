@@ -6,6 +6,7 @@ from fastapi.requests import Request
 from fastapi_users import BaseUserManager, UUIDIDMixin
 from fastapi_users.exceptions import UserAlreadyExists
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
+from sqlalchemy.exc import IntegrityError
 
 from src.auth.config import SECRET
 from src.core.logging_config import logger
@@ -26,10 +27,6 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     ) -> User:
         await self.validate_password(user_create.password, user_create)
 
-        existing_user = await self.user_db.get_by_email(str(user_create.email))
-        if existing_user is not None:
-            raise UserAlreadyExists()
-
         user_dict = (
             user_create.create_update_dict()
             if safe
@@ -41,11 +38,13 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         if user_dict.get("is_superuser"):
             user_dict["role"] = RoleEnum.ADMIN
 
-        created_user = await self.user_db.create(user_dict)
-
-        await self.on_after_register(created_user, request)
-
-        return created_user
+        try:
+            created_user = await self.user_db.create(user_dict)
+            await self.on_after_register(created_user, request)
+            return created_user
+        except IntegrityError:
+            logger.info("Attempt of creating existing user")
+            raise UserAlreadyExists()
 
     async def update(
         self,

@@ -1,4 +1,5 @@
 from fastapi_users.password import PasswordHelper
+from sqlalchemy.exc import IntegrityError
 from wtforms import PasswordField
 
 from src.admin.base import BaseAdmin
@@ -44,7 +45,12 @@ class UserAdmin(BaseAdmin, model=User):
         password = data.pop("password", None)
         if password:
             data["hashed_password"] = PasswordHelper().hash(password)
-        return await super().insert_model(request, data)
+        else:
+            raise ValueError("Установите пароль для пользователя")
+        try:
+            return await super().insert_model(request, data)
+        except IntegrityError:
+            raise ValueError("Пользователь с таким email уже существует")
 
     async def update_model(self, request, pk, data):
         password = data.pop("password", None)
