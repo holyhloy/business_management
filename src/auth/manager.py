@@ -34,6 +34,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         )
         password = user_dict.pop("password")
         user_dict["hashed_password"] = self.password_helper.hash(password)
+        logger.info(f"Password for user {user_create.email} created")
 
         if user_dict.get("is_superuser"):
             user_dict["role"] = RoleEnum.ADMIN
