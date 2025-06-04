@@ -3,8 +3,11 @@ import uuid
 from fastapi import Request
 from fastapi.responses import RedirectResponse, Response
 from fastapi_users import FastAPIUsers
-from fastapi_users.authentication import (AuthenticationBackend,
-                                          CookieTransport, JWTStrategy)
+from fastapi_users.authentication import (
+    AuthenticationBackend,
+    CookieTransport,
+    JWTStrategy,
+)
 from sqladmin.authentication import AuthenticationBackend as AdminBackend
 from starlette.middleware import Middleware
 from starlette.middleware.sessions import SessionMiddleware
@@ -54,9 +57,13 @@ class AdminAuth(AdminBackend):
         email = form.get("username")
         password = form.get("password")
 
-        user_db_gen = get_user_db()
-        user_db = await anext(user_db_gen)
-        user_manager = UserManager(user_db)
+        try:
+            user_db_gen = get_user_db()
+            user_db = await anext(user_db_gen)
+            user_manager = UserManager(user_db)
+        except StopAsyncIteration as e:
+            logger.info(f"Error while getting a value from user_db_gen agenerator: {e}")
+            return False
 
         try:
             user = await user_manager.get_by_email(email)
@@ -94,9 +101,13 @@ class AdminAuth(AdminBackend):
         if not user_id:
             return False
 
-        user_db_gen = get_user_db()
-        user_db = await anext(user_db_gen)
-        user_manager = UserManager(user_db)
+        try:
+            user_db_gen = get_user_db()
+            user_db = await anext(user_db_gen)
+            user_manager = UserManager(user_db)
+        except StopAsyncIteration as e:
+            logger.info(f"Error while getting a value from user_db_gen agenerator: {e}")
+            return False
 
         try:
             user = await user_manager.get(uuid.UUID(user_id))
