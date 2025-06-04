@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
+from src.auth.auth import current_user_optional
 from src.dependencies.deps import SessionDep
-from src.frontend.root import current_user_optional, render_template
+from src.frontend.config import render_template
 from src.services.calendar_service import get_calendar_days, get_calendar_view
 
 router = APIRouter()

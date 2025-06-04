@@ -11,12 +11,11 @@ from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
 
-from src.auth.auth import current_user
+from src.auth.auth import current_user, current_user_optional
 from src.core.config import settings
 from src.core.lisespan import clear_cache
 from src.db.session import get_session
 from src.dependencies.deps import require_role
-from src.frontend.root import current_user_optional
 from src.main import app
 from src.models import *
 from src.models.base import Base

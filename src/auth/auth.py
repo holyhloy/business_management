@@ -43,6 +43,7 @@ fastapi_users = FastAPIUsers[User, uuid.UUID](
 )
 
 current_user = fastapi_users.current_user()
+current_user_optional = fastapi_users.current_user(optional=True)
 
 
 class AdminAuth(AdminBackend):
