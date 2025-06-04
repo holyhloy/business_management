@@ -43,7 +43,9 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
             await self.on_after_register(created_user, request)
             return created_user
         except IntegrityError:
-            logger.info("Attempt of creating existing user")
+            logger.info(
+                f"Attempt of creating user with existing email: {user_create.email}"
+            )
             raise UserAlreadyExists()
 
     async def update(
