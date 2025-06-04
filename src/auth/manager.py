@@ -36,8 +36,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         user_dict["hashed_password"] = self.password_helper.hash(password)
         logger.info(f"Password for user {user_create.email} created")
 
-        if user_dict.get("is_superuser"):
-            user_dict["role"] = RoleEnum.ADMIN
+        await self._make_superuser_admin(user_dict)
 
         try:
             created_user = await self.user_db.create(user_dict)
@@ -60,11 +59,14 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
             updated_user_data = user_update.create_update_dict()
         else:
             updated_user_data = user_update.create_update_dict_superuser()
-            if updated_user_data.get("is_superuser"):
-                updated_user_data["role"] = RoleEnum.ADMIN
+            await self._make_superuser_admin(updated_user_data)
         updated_user = await self._update(user, updated_user_data)
         await self.on_after_update(updated_user, updated_user_data, request)
         return updated_user
+
+    async def _make_superuser_admin(self, user_data: dict[str, Any]) -> None:
+        if user_data.get("is_superuser"):
+            user_data["role"] = RoleEnum.ADMIN
 
     async def on_after_register(self, user: User, request=None) -> None:
         logger.info(f"User registered: {user.id}")
