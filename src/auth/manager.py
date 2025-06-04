@@ -1,5 +1,5 @@
 import uuid
-from typing import Optional
+from typing import Optional, Any
 
 from fastapi import Depends
 from fastapi.requests import Request
@@ -66,8 +66,16 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         await self.on_after_update(updated_user, updated_user_data, request)
         return updated_user
 
-    async def on_after_register(self, user: User, request=None):
+    async def on_after_register(self, user: User, request=None) -> None:
         logger.info(f"User registered: {user.id}")
+
+    async def on_after_update(
+        self,
+        user: User,
+        update_dict: dict[str, Any],
+        request: Optional[Request] = None,
+    ) -> None:
+        logger.info(f"User updated: {user.id}. Updated fields: {update_dict.keys()}")
 
 
 async def get_user_db():
