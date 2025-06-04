@@ -118,7 +118,7 @@ class AdminAuth(AdminBackend):
         try:
             user = await user_manager.get(uuid.UUID(user_id))
             return user.role is RoleEnum.ADMIN
-        except Exception as e:
+        except ValueError as e:
             logger.info(f"[AdminAuth] Auth error: {e}")
             return False
         finally:
