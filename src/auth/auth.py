@@ -12,7 +12,7 @@ from sqladmin.authentication import AuthenticationBackend as AdminBackend
 from starlette.middleware import Middleware
 from starlette.middleware.sessions import SessionMiddleware
 
-from src.auth.manager import UserManager, get_user_db, get_user_manager
+from src.auth.manager import get_user_db, get_user_manager
 from src.core.config import settings
 from src.core.logging_config import logger
 from src.models.user import RoleEnum, User
@@ -68,9 +68,13 @@ class AdminAuth(AdminBackend):
 
         try:
             user = await user_manager.get_by_email(email)
-            valid, _ = user_manager.password_helper.verify_and_update(
+            valid, new_hashed_password = user_manager.password_helper.verify_and_update(
                 password, user.hashed_password
             )
+
+            if new_hashed_password:
+                user.hashed_password = new_hashed_password
+                await user_manager.user_db.update(user)
 
             if valid and user.role == RoleEnum.ADMIN:
                 request.session["admin_user_id"] = str(user.id)
