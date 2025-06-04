@@ -19,7 +19,8 @@ SECRET = settings.SECRET_KEY
 cookie_transport = CookieTransport(
     cookie_name="bizauth",
     cookie_max_age=3600,
-    cookie_samesite="lax",
+    cookie_samesite="none",
+    cookie_secure=True,
 )
 
 
