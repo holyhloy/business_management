@@ -104,7 +104,7 @@ class AdminAuth(AdminBackend):
 
         user_id = request.session.get("admin_user_id")
         if not user_id:
-            return False
+            return RedirectResponse(url="/admin/login")
 
         try:
             user_db_gen = get_user_db()
