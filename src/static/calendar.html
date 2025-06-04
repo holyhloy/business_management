@@ -31,7 +31,7 @@
       <tr>
         {% for day in week %}
         {% set day_str = day.isoformat() %}
-        {% set is_today = day == target_date %}
+        {% set is_today = day == current_date %}
         {% set is_current_month = day.month == target_date.month %}
 
         <td style="
