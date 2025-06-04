@@ -76,7 +76,7 @@ class AdminAuth(AdminBackend):
                 user.hashed_password = new_hashed_password
                 await user_manager.user_db.update(user)
 
-            if valid and user.role == RoleEnum.ADMIN:
+            if valid and user.role is RoleEnum.ADMIN:
                 request.session["admin_user_id"] = str(user.id)
                 logger.info(
                     f"User {user.id} has been logged in admin panel successfully"
@@ -117,7 +117,7 @@ class AdminAuth(AdminBackend):
 
         try:
             user = await user_manager.get(uuid.UUID(user_id))
-            return user.role == RoleEnum.ADMIN
+            return user.role is RoleEnum.ADMIN
         except Exception as e:
             logger.info(f"[AdminAuth] Auth error: {e}")
             return False
