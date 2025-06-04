@@ -15,10 +15,11 @@ def get_calendar_days(target_date: date) -> list[date]:
     first_day = date(year, month, 1)
     last_day = date(year, month, monthrange(year, month)[1])
 
-    start_delta = (first_day.weekday()) % 7  # Пн=0, Вс=6
+    # Сдвигаем к началу недели (Пн = 0), чтобы календарь начинался с понедельника
+    start_delta = first_day.weekday()  # Пн=0, Вс=6
     start_date = first_day - timedelta(days=start_delta)
 
-    end_delta = 6 - (last_day.weekday() % 7)
+    end_delta = 6 - last_day.weekday()
     end_date = last_day + timedelta(days=end_delta)
 
     total_days = (end_date - start_date).days + 1
