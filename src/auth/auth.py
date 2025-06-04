@@ -60,7 +60,8 @@ class AdminAuth(AdminBackend):
         try:
             user_db_gen = get_user_db()
             user_db = await anext(user_db_gen)
-            user_manager = UserManager(user_db)
+            user_manager_gen = get_user_manager(user_db)
+            user_manager = await anext(user_manager_gen)
         except StopAsyncIteration as e:
             logger.info(f"Error while getting a value from user_db_gen agenerator: {e}")
             return False
@@ -104,7 +105,8 @@ class AdminAuth(AdminBackend):
         try:
             user_db_gen = get_user_db()
             user_db = await anext(user_db_gen)
-            user_manager = UserManager(user_db)
+            user_manager_gen = get_user_manager(user_db)
+            user_manager = await anext(user_manager_gen)
         except StopAsyncIteration as e:
             logger.info(f"Error while getting a value from user_db_gen agenerator: {e}")
             return False
