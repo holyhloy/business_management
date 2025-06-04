@@ -37,6 +37,10 @@ async def get_calendar_view(
     target_date: date,
     session: SessionDep,
 ) -> dict[date, dict[str, list[Any]]]:
+
+    if not isinstance(user_id, uuid.UUID):
+        raise ValueError("Invalid user_id")
+
     start_of_month = target_date.replace(day=1)
     next_month = get_next_month_start(start_of_month)
 
