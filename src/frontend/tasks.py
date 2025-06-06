@@ -17,7 +17,7 @@ async def get_frontend_my_tasks(
     request: Request, session: SessionDep, user: User = Depends(current_user_optional)
 ):
     if not user:
-        return RedirectResponse(url="/auth")
+        return RedirectResponse(url="/auth", status_code=302)
     user_list = await get_all_users(session)
     tasks_list = await list_tasks(session, user.id)
     return render_template(

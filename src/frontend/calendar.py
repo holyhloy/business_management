@@ -21,7 +21,7 @@ async def get_frontend_calendar(
     view_mode: str = "month",
 ):
     if not user:
-        return RedirectResponse(url="/auth")
+        return RedirectResponse(url="/auth", status_code=302)
 
     calendar_data = await get_calendar_view(user.id, target_date, session)
     calendar_days = get_calendar_days(target_date)

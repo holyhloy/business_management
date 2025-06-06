@@ -10,5 +10,5 @@ router = APIRouter()
 @router.get("/")
 async def root(user: User = Depends(current_user_optional)):
     if not user:
-        return RedirectResponse(url="/auth")
-    return RedirectResponse(url="/index")
+        return RedirectResponse(url="/auth", status_code=302)
+    return RedirectResponse(url="/index", status_code=302)

@@ -14,5 +14,5 @@ async def get_front_evaluations(
     request: Request, user: User = Depends(current_user_optional)
 ):
     if not user:
-        return RedirectResponse(url="/auth")
+        return RedirectResponse(url="/auth", status_code=302)
     return render_template("evaluations.html", request, {})
