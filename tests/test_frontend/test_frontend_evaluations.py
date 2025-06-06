@@ -15,5 +15,5 @@ async def test_get_front_evaluations_authenticated(
 @pytest.mark.asyncio
 async def test_get_front_evaluations_unauthenticated(client: AsyncClient):
     response = await client.get("/evaluations", follow_redirects=False)
-    assert response.status_code == 307
+    assert response.status_code == 302
     assert response.headers["location"] == "/auth"

@@ -44,5 +44,5 @@ async def test_get_frontend_calendar_authenticated(
 @pytest.mark.asyncio
 async def test_get_frontend_calendar_unauthenticated(client: AsyncClient):
     response = await client.get("/calendar", follow_redirects=False)
-    assert response.status_code == 307
+    assert response.status_code == 302
     assert response.headers["location"] == "/auth"

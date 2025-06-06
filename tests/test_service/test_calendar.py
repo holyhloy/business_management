@@ -36,11 +36,11 @@ async def test_get_calendar_view(session, mock_user):
 
     result = await get_calendar_view(user_id, today, session)
 
-    assert deadline.date().isoformat() in result
-    assert start.date().isoformat() in result
+    assert deadline.date() in result
+    assert start.date() in result
 
-    assert task in result[deadline.date().isoformat()]["tasks"]
-    assert meeting in result[start.date().isoformat()]["meetings"]
+    assert task in result[deadline.date()]["tasks"]
+    assert meeting in result[start.date()]["meetings"]
 
 
 def test_get_calendar_days_range():
