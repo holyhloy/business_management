@@ -1,5 +1,3 @@
-import re
-
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -15,9 +13,7 @@ class InjectUserMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         try:
-            cookies = request.headers.get("cookie")
-            match = re.search(r"bizauth=([^;]+)", cookies)
-            token = match.group(1) if match else None
+            token = request.cookies.get("bizauth")
 
             user_db_gen = get_user_db()
             user_db = await anext(user_db_gen)
