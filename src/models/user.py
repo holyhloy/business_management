@@ -37,7 +37,9 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     team: Mapped[Optional["Team"]] = relationship(
         back_populates="users", lazy="selectin"
     )
-    tasks: Mapped[List["Task"]] = relationship(back_populates="assignee")
+    tasks: Mapped[List["Task"]] = relationship(
+        back_populates="assignee", lazy="selectin"
+    )
     evaluations: Mapped[List["Evaluation"]] = relationship(
         back_populates="user", cascade="all, delete"
     )
@@ -46,4 +48,4 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     )
 
     def __repr__(self):
-        return self.email
+        return f"ID: {self.id}, E-Mail: {self.email}, First Name: {self.first_name}"
