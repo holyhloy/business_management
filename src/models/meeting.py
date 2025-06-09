@@ -35,9 +35,9 @@ class MeetingParticipant(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
 
     meeting: Mapped[Meeting] = relationship(
-        back_populates="participants", lazy="selectin"
+        back_populates="participants", lazy="joined"
     )
-    user: Mapped["User"] = relationship(back_populates="meetings", lazy="selectin")
+    user: Mapped["User"] = relationship(back_populates="meetings", lazy="joined")
 
     def __repr__(self):
-        return self.meeting.title
+        return f"ID: {self.user_id}, E-Mail: {self.user.email}, First Name: {self.user.first_name}"

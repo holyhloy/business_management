@@ -92,7 +92,6 @@ class MeetingAdmin(BaseAdmin, model=Meeting):
 
         return meeting
 
-
     async def update_model(self, request, pk, data):
         participants = data.pop("participants", [])
         participant_ids = [uuid.UUID(p) for p in participants]
