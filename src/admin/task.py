@@ -44,8 +44,9 @@ class TaskAdmin(BaseAdmin, model=Task):
         return form_class
 
     async def insert_model(self, request, data):
-        del data["evaluation_score"]
-        team = data["team"]
+        if data["evaluation_score"]:
+            del data["evaluation_score"]
+        team = data.get("item", None)
         async with self.session_maker() as session:
             user = await session.get(User, data["assignee"])
         if team:
