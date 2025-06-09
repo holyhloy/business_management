@@ -68,6 +68,16 @@ class MeetingAdmin(BaseAdmin, model=Meeting):
                     "Время встречи конфликтует с другой встречей участника."
                 )
 
+    async def add_participants(self, meeting, participant_ids):
+        async with self.session_maker() as session:
+            session.add_all(
+                [
+                    MeetingParticipant(meeting_id=meeting.id, user_id=pid)
+                    for pid in participant_ids
+                ]
+            )
+            await session.commit()
+
     async def insert_model(self, request, data):
         participants = data.pop("participants", [])
         participant_ids = [uuid.UUID(p) for p in participants]
@@ -78,16 +88,10 @@ class MeetingAdmin(BaseAdmin, model=Meeting):
 
         meeting = await super().insert_model(request, data)
 
-        async with self.session_maker() as session:
-            session.add_all(
-                [
-                    MeetingParticipant(meeting_id=meeting.id, user_id=pid)
-                    for pid in participant_ids
-                ]
-            )
-            await session.commit()
+        await self.add_participants(meeting, participant_ids)
 
         return meeting
+
 
     async def update_model(self, request, pk, data):
         participants = data.pop("participants", [])
@@ -108,12 +112,7 @@ class MeetingAdmin(BaseAdmin, model=Meeting):
                     MeetingParticipant.meeting_id == meeting.id
                 )
             )
-            session.add_all(
-                [
-                    MeetingParticipant(meeting_id=meeting.id, user_id=pid)
-                    for pid in participant_ids
-                ]
-            )
-            await session.commit()
+
+        await self.add_participants(meeting, participant_ids)
 
         return meeting
