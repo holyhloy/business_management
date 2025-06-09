@@ -31,9 +31,6 @@ class UserAdmin(BaseAdmin, model=User):
         User.meetings,
     ]
 
-    form_overrides = {
-        "password": PasswordField,
-    }
     name_plural = "Пользователи"
     is_async = True
 
@@ -47,11 +44,11 @@ class UserAdmin(BaseAdmin, model=User):
         if password:
             data["hashed_password"] = PasswordHelper().hash(password)
         else:
-            raise ValueError("Установите пароль для пользователя")
+            raise ValueError("Необходимо задать пароль при создании пользователя")
         try:
             return await super().insert_model(request, data)
-        except IntegrityError:
-            raise ValueError("Пользователь с таким email уже существует")
+        except IntegrityError as e:
+            raise ValueError(f"Ошибка создания пользователя: {e.args[0]}")
 
     async def update_model(self, request, pk, data):
         password = data.pop("password", None)

@@ -2,7 +2,7 @@ from wtforms import SelectField
 
 from src.admin.base import BaseAdmin
 from src.models import Evaluation, User
-from src.models.task import Task
+from src.models.task import Task, TaskStatus
 
 
 class TaskAdmin(BaseAdmin, model=Task):
@@ -76,7 +76,7 @@ class TaskAdmin(BaseAdmin, model=Task):
                 if db_task.evaluation:
                     db_task.evaluation.score = score
                 else:
-                    if db_task.status == "completed":
+                    if db_task.status == TaskStatus.completed:
                         db_task.evaluation = Evaluation(
                             task_id=pk,
                             user_id=db_task.assignee_id,
