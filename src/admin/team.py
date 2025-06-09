@@ -7,3 +7,4 @@ class TeamAdmin(BaseAdmin, model=Team):
     column_searchable_list = [Team.name, Team.code]
     form_excluded_columns = ["tasks"]
     name_plural = "Команды"
+    is_async = True

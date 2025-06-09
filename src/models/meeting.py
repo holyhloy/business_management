@@ -35,7 +35,7 @@ class MeetingParticipant(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
 
     meeting: Mapped[Meeting] = relationship(
-        back_populates="participants", lazy="joined"
+        back_populates="participants", lazy="selectin"
     )
     user: Mapped["User"] = relationship(back_populates="meetings", lazy="joined")
 

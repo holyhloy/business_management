@@ -35,6 +35,7 @@ class UserAdmin(BaseAdmin, model=User):
         "password": PasswordField,
     }
     name_plural = "Пользователи"
+    is_async = True
 
     async def scaffold_form(self, rules):
         form_class = await super().scaffold_form()

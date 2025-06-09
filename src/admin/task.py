@@ -29,6 +29,7 @@ class TaskAdmin(BaseAdmin, model=Task):
     }
     form_excluded_columns = ["comments", Task.evaluation]
     name_plural = "Задачи"
+    is_async = True
 
     async def scaffold_form(self, rules=None):
         form_class = await super().scaffold_form()

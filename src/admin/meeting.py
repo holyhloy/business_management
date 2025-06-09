@@ -19,6 +19,7 @@ class MeetingAdmin(BaseAdmin, model=Meeting):
     column_sortable_list = [Meeting.start_time]
     form_excluded_columns = [Meeting.participants]
     name_plural = "Встречи"
+    is_async = True
 
     async def scaffold_form(self, rules=None):
         form_class = await super().scaffold_form()
