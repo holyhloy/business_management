@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block title %}Профиль{% endblock %}
+{% block header %}Профиль{% endblock %}
+
+{% block content %}
+  <h2>Профиль</h2>
+
+  <section>
+    <h3>Текущий пользователь (/users/me)</h3>
+    <p> Email: {{ user.email }}</p>
+    <p> Имя: {{ user.first_name }}</p>
+    <p> Фамилия: {{ user.last_name }}</p>
+    <p> Должность: {{ user.role.value }}</p>
+    <p> Команда: {{ user.team }}</p>
+    <h3>Обновить профиль</h3>
+    <form id="form-patch-me">
+      <label>Email:
+        <input name="email" type="email" placeholder="новый email" />
+      </label>
+      <label>Password:
+        <input name="password" type="password" placeholder="новый пароль" />
+      </label>
+      <label>Имя:
+        <input name="first_name" type="text" placeholder="новое имя" />
+      </label>
+      <label>Фамилия:
+        <input name="last_name" type="text" placeholder="новая фамилия" />
+      </label>
+      <button type="submit">Обновить</button>
+    </form>
+  </section>
+
+  <script>
+    const API = `${window.location.protocol}//${window.location.host}`;
+    const opts = { credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+
+    document.getElementById('form-patch-me').onsubmit = async e => {
+      e.preventDefault();
+      const f = e.target;
+      const body = {};
+      if (f.email.value) body.email = f.email.value;
+      if (f.password.value) body.password = f.password.value;
+      if (f.first_name.value) body.first_name = f.first_name.value;
+      if (f.last_name.value) body.last_name = f.last_name.value;
+      const res = await fetch(`${API}/users/me`, {
+        ...opts, method: 'PATCH', body: JSON.stringify(body)
+      });
+      if (res.ok) {
+        window.location.href = "/profile";
+      } else {
+        alert("Ошибка редактирования профиля");
+      }
+    };
+  </script>
+{% endblock %}

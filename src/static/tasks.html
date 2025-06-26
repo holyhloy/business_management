@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}Мои задачи{% endblock %}
+{% block header %}Мои задачи{% endblock %}
+
+{% block content %}
+<h1>Мои задачи</h1>
+
+<div id="tasks-container">
+  {% for task in tasks %}
+  <div class="task-card" data-task-id="{{ task.id }}">
+    <h3>{{ task.title }} — {{ task.status.value }}</h3>
+    <p>{{ task.description }}</p>
+    <p><strong>Дедлайн:</strong> {{ task.deadline }}</p>
+    <p><strong>Исполнитель:</strong> {{ task.assignee.email }}</p>
+
+    <div class="comments">
+      <h3>Комментарии</h3>
+      <div class="comment-list">
+        {% for comment in task.comments %}
+        <p><strong>{{ comment.user.email }}:</strong> {{ comment.content }}</p>
+        {% endfor %}
+      </div>
+      <form class="comment-form">
+        <input type="text" name="content" placeholder="Добавить комментарий" required />
+        <button type="submit">Отправить</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block script %}
+<script>
+  document.querySelectorAll(".comment-form").forEach(form => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const taskId = f.closest(".task-card").dataset.taskId;
+      const body = { content: f.content.value };
+      const res = await fetch(`/tasks/${taskId}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      if (res.ok) location.reload();
+      else alert("Ошибка отправки комментария");
+    });
+  });
+</script>
+{% endblock %}
+

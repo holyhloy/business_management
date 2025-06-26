@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block title %}Встречи{% endblock %}
+{% block header %}Календарь{% endblock %}
+
+{% block content %}
+  <h2>Встречи</h2>
+
+  <section>
+    <h3>Мои встречи</h3>
+    <button id="btn-get-meetings">Обновить список</button>
+    <pre id="out-meetings"></pre>
+  </section>
+
+  {% if user and user.role == "admin" %}
+  <section>
+    <h3>Создать встречу</h3>
+    <form id="form-create-meeting">
+      <label>Название:
+        <input name="title" type="text" required>
+      </label>
+      <label>Начало:
+        <input name="start_time" type="datetime-local" required>
+      </label>
+      <label>Конец:
+        <input name="end_time" type="datetime-local" required>
+      </label>
+      <label>Участники:</label>
+        <select id="participants" name="participants" multiple>
+          {% for user in users %}
+            <option value="{{ user.id }}">{{ user.email }}</option>
+          {% endfor %}
+        </select>
+      <button type="submit">Создать</button>
+    </form>
+  </section>
+  {% endif %}
+
+  <section>
+    <h3>Отменить встречу</h3>
+    <form id="form-cancel-meeting">
+      <label>ID встречи:
+        <input name="meeting_id" type="number" required>
+      </label>
+      <button type="submit">Отменить</button>
+    </form>
+    <pre id="out-cancel-meeting"></pre>
+  </section>
+
+  <script>
+    const API = `${window.location.protocol}//${window.location.host}`;
+    const opts = { credentials: 'include', headers: { 'Content-Type': 'application/json' } };
+
+    document.getElementById('btn-get-meetings').onclick = async () => {
+      const res = await fetch(`${API}/meetings/my`, opts);
+      document.getElementById('out-meetings').textContent = res.ok
+        ? JSON.stringify(await res.json(), null, 2)
+        : `Ошибка ${res.status}`;
+    };
+
+    document.getElementById("form-create-meeting").onsubmit = async e => {
+      e.preventDefault();
+      const f = e.target;
+
+      const selectedOptions = Array.from(f.participants.selectedOptions);
+
+      const participantIds = selectedOptions.map(option => option.value);
+
+      const body = {
+        title: f.title.value,
+        start_time: f.start_time.value,
+        end_time: f.end_time.value,
+        participant_ids: participantIds,
+      };
+
+      const res = await fetch(`${API}/meetings`, {
+        ...opts,
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        alert("Встреча создана");
+      } else {
+        const error = await res.json();
+        alert(error.detail || "Произошла ошибка при создании встречи.");
+      }
+    };
+
+
+    document.getElementById('form-cancel-meeting').onsubmit = async e => {
+      e.preventDefault();
+      const id = e.target.meeting_id.value;
+      const res = await fetch(`${API}/meetings/${id}`, {
+        ...opts,
+        method: 'DELETE'
+      });
+      document.getElementById('out-cancel-meeting').textContent = res.ok
+        ? 'Встреча отменена'
+        : `Ошибка ${res.status}`;
+    };
+  </script>
+{% endblock %}

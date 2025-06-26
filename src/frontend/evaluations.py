@@ -1,0 +1,18 @@
+from fastapi import APIRouter, Depends
+from fastapi.requests import Request
+from fastapi.responses import HTMLResponse, RedirectResponse
+
+from src.auth.auth import current_user_optional
+from src.frontend.config import render_template
+from src.models import User
+
+router = APIRouter()
+
+
+@router.get("/evaluations", response_class=HTMLResponse)
+async def get_front_evaluations(
+    request: Request, user: User = Depends(current_user_optional)
+):
+    if not user:
+        return RedirectResponse(url="/auth", status_code=302)
+    return render_template("evaluations.html", request, {})
